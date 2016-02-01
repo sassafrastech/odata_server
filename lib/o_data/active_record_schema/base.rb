@@ -11,7 +11,7 @@ module OData
         Dir.glob(Rails.root.to_s + '/app/models/*.rb').each { |file| require file }
         
         ActiveRecord::Base.descendants.reject { |active_record|
-          active_record == ActiveRecord::SchemaMigration          
+          active_record == ActiveRecord::SchemaMigration or active_record.abstract_class
         }.collect { |active_record|
           self.EntityType(active_record, :reflect_on_associations => false)
         }.collect { |entity_type| 
