@@ -35,6 +35,7 @@ module OData
       end
       
       def self.column_names_for_from_end(reflection)
+        Rails.logger.info(reflection)
         out = []
         
         case reflection.macro
