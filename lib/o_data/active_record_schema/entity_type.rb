@@ -70,9 +70,9 @@ module OData
 
       def find_all(key_values = {}, options = nil)
         if @active_record.respond_to?(:with_permissions_to)
-          @active_record.with_permissions_to(:read).find(:all, :conditions => conditions_for_find(key_values))
+          @active_record.with_permissions_to(:read).where(conditions_for_find(key_values)).to_a
         else
-          @active_record.find(:all, :conditions => conditions_for_find(key_values))
+          @active_record.where(conditions_for_find(key_values)).to_a
         end
       end
       
