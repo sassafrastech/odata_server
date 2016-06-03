@@ -21,7 +21,11 @@ module OData
         begin
             reflection.class_name.constantize
         rescue => ex
-          raise "Failed to handle class <#{reflection.active_record}> #{reflection.macro} #{reflection.name}"
+          begin
+            reflection.options[:anonymous_class].name.constantize
+          rescue => exc
+            raise "Failed to handle class <#{reflection.active_record}> #{reflection.macro} #{reflection.name}"
+          end
         end
       end
 
