@@ -6,9 +6,9 @@ require "o_data/version"
 Gem::Specification.new do |s|
   s.name = "odata_server"
   s.version = OData::VERSION
-  s.authors = ["Mark Borkum", "Brad Langhorst", "Nigel Sheridan-Smith", "Lawrence McAlpin", "Sebastian Kliem"]
+  s.authors = ["Mark Borkum", "Brad Langhorst", "Nigel Sheridan-Smith", "Lawrence McAlpin", "Jason Hamilton", "Sebastian Kliem"]
   s.date = "2016-06-02"
-  s.email = "sebastian-kliem@live.de"
+  s.email = "lmcalpin@gmail.com"
   s.homepage = ""
   s.summary = "A simple gem that exposes ActiveRecord models as OData collections."
   s.description = ""
@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
   s.require_paths = ["lib"]
 
-  s.add_dependency "rails", ">= 4.0.0"
+  s.add_dependency "rails", ">= 4.0"
 end
