@@ -66,7 +66,11 @@ module OData
             out << polymorphic_column_name(reflection, 'Key')
             out << polymorphic_column_name(reflection, 'ReturnType')
           else
-            out << EntityType.primary_key_for(reflection.class_name.constantize)
+            begin
+              out << EntityType.primary_key_for(reflection.class_name.constantize)
+            rescue NameError
+              out << reflection.options[:anonymous_class].primary_key
+            end
           end
         else
           out << reflection.class_name.constantize.primary_key
