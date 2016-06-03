@@ -43,7 +43,11 @@ module OData
 
         case reflection.macro
         when :belongs_to
-          out << reflection.class_name.constantize.primary_key
+          begin
+            out << reflection.class_name.constantize.primary_key
+          rescue NameError
+            out << reflection.options[:anonymous_class].primary_key
+          end
           out << reflection.options[:foreign_type] if reflection.options[:polymorphic]
         else
           out << EntityType.primary_key_for(reflection.active_record)
