@@ -39,6 +39,7 @@ module OData
         m = (@options[:nullable] ? '0' : '1') + '..' + (@options[:multiple] ? '*' : '1')
         m = '1' if m == '1..1'
         m = '*' if m == '0..*'
+        m = '*' if m == '1..*'
         m
       end
       
