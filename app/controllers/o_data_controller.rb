@@ -89,7 +89,7 @@ class ODataController < ApplicationController
       end
       
       respond_to do |format|
-        format.atom # resource.atom.builder
+        format.xml # resource.xml.builder
         format.json # resource.json.erb
       end
     when OData::Core::Segments::CollectionSegment.segment_name
