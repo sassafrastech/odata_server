@@ -8,6 +8,7 @@ xml.tag!(:service, 'xmlns:atom': 'http://www.w3.org/2005/Atom' , \
 	  xml.tag!(:workspace) do
 	    xml.atom(:title, schema.namespace, type: :text)
 	    schema.entity_types.collect(&:plural_name).sort.each do |plural_name|
+        next if plural_name.include?('HABTM')
 	      xml.tag!(:collection, :href => plural_name) do
 	        xml.atom(:title, plural_name)
 	      end
