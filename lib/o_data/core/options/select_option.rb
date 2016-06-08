@@ -36,14 +36,14 @@ module OData
                 property_name = md[1]
                 
                 property = entity_type.properties.find { |p| p.name == property_name }
-                raise OData::Core::Errors::PropertyNotFound.new(query, property_name) if property.blank?
+                raise OData::Core::Errors::PropertyNotFound.new(query, property_name) if property.blank? and entity_type.navigation_properties.find{ |np| np.name == property_name}.blank?
 
                 property
               else
                 raise OData::Core::Errors::PropertyNotFound.new(query, path)
               end
-            }
-            
+            }.compact
+
             query.Option(self, properties)
           else
             raise OData::Core::Errors::InvalidOptionContext.new(query, self.option_name) unless value.blank?
