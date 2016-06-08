@@ -340,7 +340,13 @@ class ODataController < ApplicationController
         return select_option.properties
       else
         # entity_type is an $expand'ed navigation property
-        return []
+       if expand_option = query.options.find{ |o| o.option_name == OData::Core::Options::ExpandOption.option_name }
+         if expand_option.value.downcase == entity_type.plural_name.downcase
+           return entity_type.properties
+         end
+       else
+         return []
+       end
       end
     end
     
