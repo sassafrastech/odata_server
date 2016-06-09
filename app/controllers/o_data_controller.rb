@@ -260,7 +260,7 @@ class ODataController < ApplicationController
       if inlinecount_option.value == 'allpages'
         _json = {
           "results" => results_json,
-          "__count" => results.length
+          "__count" => results.length.to_s
         }
         
         return options[:d] ? { "d" => _json } : _json
