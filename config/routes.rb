@@ -5,5 +5,5 @@ OData::Engine.routes.draw do
   # this is a workaround
   get ':wtfrails' => "o_data#metadata", :as => :metadata, :defaults => { :format => 'xml' },
     :constraints => {wtfrails: /\$metadata/ }
-  get '*path' => "o_data#resource", :as => :resource, :defaults => { :format => 'atom' }
+  get '*path' => "o_data#resource", :as => :resource, :defaults => { :format => 'json' }
 end

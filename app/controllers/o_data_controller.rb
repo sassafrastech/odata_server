@@ -89,7 +89,7 @@ class ODataController < ApplicationController
       end
       
       respond_to do |format|
-        format.atom # resource.atom.builder
+        format.xml # resource.xml.builder
         format.json # resource.json.erb
       end
     when OData::Core::Segments::CollectionSegment.segment_name
@@ -260,7 +260,7 @@ class ODataController < ApplicationController
       if inlinecount_option.value == 'allpages'
         _json = {
           "results" => results_json,
-          "__count" => results.length
+          "__count" => results.length.to_s
         }
         
         return options[:d] ? { "d" => _json } : _json
@@ -340,7 +340,13 @@ class ODataController < ApplicationController
         return select_option.properties
       else
         # entity_type is an $expand'ed navigation property
-        return []
+       if expand_option = query.options.find{ |o| o.option_name == OData::Core::Options::ExpandOption.option_name }
+         if expand_option.value.downcase == entity_type.plural_name.downcase
+           return entity_type.properties
+         end
+       else
+         return []
+       end
       end
     end
     
