@@ -38,7 +38,7 @@ module OData
       
       def value_for(one)
         v = one.send(@column_adapter.name.to_sym)
-        return v.to_datetime.iso8601 if v.class == ActiveSupport::TimeWithZone
+        return v.to_datetime.strftime('%Y-%m-%dT%H:%M:%S') if v.class == ActiveSupport::TimeWithZone
         v.respond_to?(:iso8601) ? v.send(:iso8601) : v
       end
     end
