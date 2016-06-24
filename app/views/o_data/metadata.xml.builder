@@ -58,7 +58,10 @@ xml.edmx(:Edmx, :Version => "1.0", "xmlns:edmx" => "http://schemas.microsoft.com
             next if association.name.include?('HABTM')
 	          xml.tag!(:AssociationSet, :Name => association.name.gsub('#', '_'), :Association => association.qualified_name.gsub('#', '_')) do
 	            xml.tag!(:End, :EntitySet => association.from_end.entity_type.plural_name, :Role => association.from_end.name)
-	            xml.tag!(:End, :EntitySet => association.reflection.options[:polymorphic] ? association.to_end.return_type : association.to_end.entity_type.plural_name, :Role => association.to_end.name)
+	            xml.tag!(:End, :EntitySet => (association.reflection.options[:polymorphic] ?
+                                            association.to_end.return_type :
+                                            (association.to_end.entity_type.nil? ? nil : association.to_end.entity_type.plural_name)),
+                             :Role => association.to_end.name)
 	          end
 	        end
 	      end
