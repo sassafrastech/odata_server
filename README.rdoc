@@ -1,5 +1,3 @@
-<b>A more up-to-date version of this library is maintained at https://github.com/sebastiankliem/odata_server</b>
-
 === OData Server
 
 This is a rails plugin/engine to embue your application with OData features (so its data can be readily 
