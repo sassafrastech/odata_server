@@ -1,9 +1,10 @@
 OData::Engine.routes.draw do
-  get '/' => "o_data#service", :as => :service, :defaults => { :format => 'xml' }
+  get '/' => "o_data#service", as: :service, defaults: { format: 'xml' }
   # this is what we want to do, but this doesn't work in Rails 4
-  #get '$metadata' => "o_data#metadata", :as => :o_data_metadata, :defaults => { :format => 'xml' }
+  #get '$metadata' => "o_data#metadata", as: :metadata, defaults: { format: 'xml' }
   # this is a workaround
-  get ':wtfrails' => "o_data#metadata", :as => :metadata, :defaults => { :format => 'xml' },
-    :constraints => {wtfrails: /\$metadata/ }
-  get '*path' => "o_data#resource", :as => :resource, :defaults => { :format => 'json' }
+  get ':wtfrails' => "o_data#metadata", as: :metadata,
+                                        defaults: { format: 'xml', wtfrails: '$metadata' },
+                                        constraints: { wtfrails: /\$metadata/ }
+  get '*path' => "o_data#resource", as: :resource, defaults: { format: 'json' }
 end
