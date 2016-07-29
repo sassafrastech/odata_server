@@ -1,1 +1,8 @@
-<%= if @countable then o_data_json_feed(@query, @results, :d => true, :expand => @expand_navigation_property_paths).to_json else o_data_json_entry(@query, [@results].flatten.compact.first, :d => true, :expand => @expand_navigation_property_paths).to_json end.html_safe %>
+<%=
+  if @countable
+    o_data_json_feed(@query, @results, :d => true, :expand => @expand_navigation_property_paths).to_json
+  else
+    first_result = [@results].flatten.compact.first
+    o_data_json_entry(@query, first_result, :d => true, :expand => @expand_navigation_property_paths).to_json
+  end.html_safe
+%>
