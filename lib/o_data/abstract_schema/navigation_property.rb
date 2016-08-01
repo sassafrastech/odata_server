@@ -2,7 +2,7 @@ module OData
   module AbstractSchema
     class NavigationProperty < SchemaObject
       attr_reader :entity_type
-      attr_accessor :association, :from_end, :to_end
+      attr_accessor :association, :the_end
 
       def initialize(schema, entity_type, name, association, options = {})
         super(schema, name)
@@ -10,15 +10,7 @@ module OData
         @entity_type = entity_type
         @association = association
 
-        options.reverse_merge!(:source => true)
-
-        if options[:source]
-          @from_end = @association.from_end
-          @to_end = @association.to_end
-        else
-          @to_end = @association.to_end
-          @from_end = @association.from_end
-        end
+        @the_end = @association.the_end
       end
 
       def name
@@ -26,7 +18,7 @@ module OData
       end
 
       def return_type
-        @to_end.return_type
+        @the_end.return_type
       end
 
       def find_all(one, key_values = {})

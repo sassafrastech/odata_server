@@ -13,7 +13,7 @@ module OData
         }
       end
 
-      def active_record_for_from_end(reflection)
+      def active_record_for_end(reflection)
         reflection.active_record
       end
 
@@ -39,7 +39,7 @@ module OData
         self.polymorphic_namespace_name.to_s + '#' + column_name.to_s
       end
 
-      def column_names_for_from_end(reflection)
+      def column_names_for_end(reflection)
         out = []
 
         case reflection.macro
@@ -84,41 +84,23 @@ module OData
         #out
       #end
 
-      def from_end_options_for(reflection)
-        entity_type = navigation_property.entity_type
-
-        polymorphic = false
-
-        # TODO: detect 'nullable' for FromEnd of Association
-        nullable = false
-
-        multiple = reflection.macro == :has_and_belongs_to_many
-
-        name = entity_type.name
-        name = name.pluralize if multiple
-
-        { name: name, entity_type: entity_type, return_type: entity_type.qualified_name, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
-      end
-
-      def to_end_options_for(reflection)
+      def end_options_for(reflection)
         Rails.logger.info("Processing #{reflection.active_record}")
 
         entity_type = navigation_property.entity_type
 
-        polymorphic = reflection.options[:polymorphic] # || reflection.options[:as]
+        polymorphic = reflection.options[:polymorphic] == true # || reflection.options[:as]
 
         multiple = [:has_many, :has_and_belongs_to_many].include?(reflection.macro)
 
-        nullable = begin
-          case reflection.macro
-          when :belongs_to
-            nullable?(active_record_for_from_end(reflection), column_names_for_from_end(reflection))
+        nullable =
+          if reflection.macro == :belongs_to
+            nullable?(active_record_for_end(reflection), column_names_for_end(reflection))
           else
             true
           end
-        end
 
-        name = EntityType.name_for(reflection.class_name)
+        name = entity_type.name
         name = name.pluralize if multiple
 
         { name: name, entity_type: entity_type, return_type: entity_type.qualified_name, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
@@ -128,7 +110,7 @@ module OData
 
       def initialize(navigation_property, reflection)
         @navigation_property = navigation_property
-        super(navigation_property, self.class.name_for(reflection), from_end_options_for(reflection), to_end_options_for(reflection))
+        super(navigation_property, self.class.name_for(reflection), end_options_for(reflection))
 
         @reflection = reflection
       end

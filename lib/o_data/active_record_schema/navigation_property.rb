@@ -7,7 +7,7 @@ module OData
 
       def initialize(schema, entity_type, reflection)
         @entity_type = entity_type
-        super(schema, entity_type, self.class.name_for(reflection), Association(reflection), source: true)
+        super(schema, entity_type, self.class.name_for(reflection), Association(reflection))
       end
 
       def method_name

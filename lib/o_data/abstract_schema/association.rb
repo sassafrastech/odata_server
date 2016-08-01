@@ -8,26 +8,21 @@ module OData
       @@polymorphic_namespace_name = '$polymorphic'
 
       attr_reader :navigation_property
-      attr_accessor :from_end, :to_end
+      attr_accessor :the_end
 
-      def initialize(navigation_property, name, from_end_options = {}, to_end_options = {})
+      def initialize(navigation_property, name, end_options = {})
         @navigation_property = navigation_property
         super(schema, name)
 
-        FromEnd(from_end_options.delete(:entity_type), from_end_options.delete(:return_type), from_end_options.delete(:name), from_end_options)
-        ToEnd(to_end_options.delete(:entity_type), to_end_options.delete(:return_type), to_end_options.delete(:name), to_end_options)
+        End(end_options.delete(:entity_type), end_options.delete(:return_type), end_options.delete(:name), end_options)
       end
 
-      def FromEnd(*args)
-        @from_end = End.new(self, *args)
-      end
-
-      def ToEnd(*args)
-        @to_end = End.new(self, *args)
+      def End(*args)
+        @the_end = End.new(self, *args)
       end
 
       def inspect
-        "#<< #{qualified_name.to_s}(#{[@from_end, @to_end].flatten.collect { |e| "#{e.name.to_s}: #{e.return_type.to_s}" }.join(", ")}) >>"
+        "#<< #{qualified_name.to_s}(#{the_end.name.to_s}: #{the_end.return_type.to_s}) >>"
       end
     end
   end
