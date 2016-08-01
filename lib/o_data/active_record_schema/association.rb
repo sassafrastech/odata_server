@@ -1,44 +1,45 @@
 module OData
   module ActiveRecordSchema
     class Association < OData::AbstractSchema::Association
+
       def self.name_for(reflection)
         EntityType.name_for(reflection.active_record) + '#' + reflection.name.to_s
       end
 
-      def self.nullable?(active_record, association_columns)
+      def nullable?(active_record, association_columns)
         association_columns.all? { |column_name|
           column = active_record.columns.find { |c| c.name == column_name }
           column.blank? ? true : column.null
         }
       end
 
-      def self.active_record_for_from_end(reflection)
+      def active_record_for_from_end(reflection)
         reflection.active_record
       end
 
-      def self.active_record_for_to_end(reflection)
-        return nil if reflection.options[:polymorphic]
-        begin
-            reflection.class_name.constantize
-        rescue => ex
-          begin
-            reflection.options[:anonymous_class].name.constantize
-          rescue => exc
-            raise "Failed to handle class <#{reflection.active_record}> #{reflection.macro} #{reflection.name}"
-          end
-        end
-      end
+      #def self.active_record_for_to_end(reflection)
+        #return nil if reflection.options[:polymorphic]
+        #begin
+            #reflection.class_name.constantize
+        #rescue => ex
+          #begin
+            #reflection.options[:anonymous_class].name.constantize
+          #rescue => exc
+            #raise "Failed to handle class <#{reflection.active_record}> #{reflection.macro} #{reflection.name}"
+          #end
+        #end
+      #end
 
       # def self.foreign_keys_for(reflection)
       #   [reflection.options[:foreign_key] || reflection.association_foreign_key, reflection.options[:foreign_type]].compact
       # end
 
-      def self.polymorphic_column_name(reflection, column_name)
+      def polymorphic_column_name(reflection, column_name)
         # self.polymorphic_namespace_name.to_s + '.' + (reflection.options[:as] ? reflection.options[:as].to_s.classify : reflection.class_name.to_s) + '#' + column_name.to_s
         self.polymorphic_namespace_name.to_s + '#' + column_name.to_s
       end
 
-      def self.column_names_for_from_end(reflection)
+      def column_names_for_from_end(reflection)
         out = []
 
         case reflection.macro
@@ -57,37 +58,34 @@ module OData
         out
       end
 
-      def self.column_names_for_to_end(reflection)
-        out = []
+      #def column_names_for_to_end(reflection)
+        #out = []
 
-        case reflection.macro
-        when :belongs_to
-          if reflection.options[:polymorphic]
-            out << polymorphic_column_name(reflection, 'Key')
-            out << polymorphic_column_name(reflection, 'ReturnType')
-          else
-            begin
-              out << EntityType.primary_key_for(reflection.class_name.constantize)
-            rescue NameError
-              out << reflection.options[:anonymous_class].primary_key
-            end
-          end
-        else
-          out << reflection.class_name.constantize.primary_key
+        #case reflection.macro
+        #when :belongs_to
+          #if reflection.options[:polymorphic]
+            #out << polymorphic_column_name(reflection, 'Key')
+            #out << polymorphic_column_name(reflection, 'ReturnType')
+          #else
+            #begin
+              #out << EntityType.primary_key_for(reflection.class_name.constantize)
+            #rescue NameError
+              #out << reflection.options[:anonymous_class].primary_key
+            #end
+          #end
+        #else
+          #out << reflection.class_name.constantize.primary_key
 
-          if reflection.options[:as]
-            out << reflection.options[:as].to_s + '_type'
-          end
-        end
+          #if reflection.options[:as]
+            #out << reflection.options[:as].to_s + '_type'
+          #end
+        #end
 
-        out
-      end
+        #out
+      #end
 
-      def self.from_end_options_for(schema, reflection)
-        active_record = active_record_for_from_end(reflection)
-
-        entity_type = schema.find_entity_type(active_record)
-        raise OData::Core::Errors::EntityTypeNotFound.new(nil, active_record.class_name) if entity_type.blank?
+      def from_end_options_for(reflection)
+        entity_type = navigation_property.entity_type
 
         polymorphic = false
 
@@ -99,13 +97,13 @@ module OData
         name = entity_type.name
         name = name.pluralize if multiple
 
-        { :name => name, :entity_type => entity_type, :return_type => entity_type.qualified_name, :multiple => multiple, :nullable => nullable, :polymorphic => polymorphic }
+        { name: name, entity_type: entity_type, return_type: entity_type.qualified_name, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
       end
 
-      def self.to_end_options_for(schema, reflection)
+      def to_end_options_for(reflection)
         Rails.logger.info("Processing #{reflection.active_record}")
-        active_record = active_record_for_to_end(reflection)
-        entity_type = schema.find_entity_type(active_record)
+
+        entity_type = navigation_property.entity_type
 
         polymorphic = reflection.options[:polymorphic] # || reflection.options[:as]
 
@@ -123,17 +121,14 @@ module OData
         name = EntityType.name_for(reflection.class_name)
         name = name.pluralize if multiple
 
-        unless active_record.blank? || entity_type.blank?
-          { :name => name, :entity_type => entity_type, :return_type => entity_type.qualified_name, :multiple => multiple, :nullable => nullable, :polymorphic => polymorphic }
-        else
-          { :name => name, :return_type => self.polymorphic_namespace_name, :multiple => multiple, :nullable => nullable, :polymorphic => polymorphic }
-        end
+        { name: name, entity_type: entity_type, return_type: entity_type.qualified_name, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
       end
 
       attr_reader :reflection
 
-      def initialize(schema, reflection)
-        super(schema, self.class.name_for(reflection), self.class.from_end_options_for(schema, reflection), self.class.to_end_options_for(schema, reflection))
+      def initialize(navigation_property, reflection)
+        @navigation_property = navigation_property
+        super(navigation_property, self.class.name_for(reflection), from_end_options_for(reflection), to_end_options_for(reflection))
 
         @reflection = reflection
       end

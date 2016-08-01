@@ -9,10 +9,6 @@ module OData
         @entity_types = []
       end
 
-      def Association(*args)
-        Association.new(self, *args)
-      end
-
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
         @entity_types << entity_type
@@ -22,7 +18,7 @@ module OData
       def associations
         @entity_types.collect(&:navigation_properties).flatten.collect(&:association).uniq
       end
-      
+
       def find_entity_type(name)
         if name.nil?
           nil
@@ -38,7 +34,7 @@ module OData
       def inspect
         "#<< #{namespace.to_s}(#{@entity_types.collect(&:name).join(', ')}) >>"
       end
-      
+
       def to_json
         { "d" => { "EntitySets" => @entity_types.collect(&:plural_name).sort } }.to_json
       end

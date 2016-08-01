@@ -4,19 +4,16 @@ module OData
       def self.name_for(reflection)
         reflection.name.to_s
       end
-      
-      def self.association_for(schema, reflection)
-        schema.Association(reflection)
-      end
 
       def initialize(schema, entity_type, reflection)
-        super(schema, entity_type, self.class.name_for(reflection), self.class.association_for(schema, reflection), :source => true)
+        @entity_type = entity_type
+        super(schema, entity_type, self.class.name_for(reflection), Association(reflection), source: true)
       end
 
       def method_name
         self.association.reflection.name.to_sym
       end
-      
+
       def find_all(one, key_values = {})
         results = one.send(method_name)
         unless key_values.blank?
@@ -29,7 +26,7 @@ module OData
         results = results.to_a if results.class <= ActiveRecord::Relation
         results
       end
-      
+
       def find_one(one, key_value = nil)
         results = one.send(method_name)
         unless key_value.blank?
@@ -40,6 +37,10 @@ module OData
           end
         end
         results
+      end
+
+      def Association(*args)
+        self.association = Association.new(self, *args)
       end
     end
   end

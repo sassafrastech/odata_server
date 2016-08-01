@@ -31,10 +31,6 @@ module OData
         self.entity_types.find { |et| et.name == EntityType.name_for(klass) }
       end
 
-      def Association(*args)
-        Association.new(self, *args)
-      end
-
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
         self.entity_types << entity_type

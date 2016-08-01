@@ -3,7 +3,7 @@ module OData
     class NavigationProperty < SchemaObject
       attr_reader :entity_type
       attr_accessor :association, :from_end, :to_end
-      
+
       def initialize(schema, entity_type, name, association, options = {})
         super(schema, name)
 
@@ -20,17 +20,25 @@ module OData
           @from_end = @association.from_end
         end
       end
-      
+
+      def name
+        @name.camelize
+      end
+
       def return_type
         @to_end.return_type
       end
-      
+
       def find_all(one, key_values = {})
         nil
       end
-      
+
       def find_one(one, key_value = nil)
         nil
+      end
+
+      def Association(*args)
+        self.association = Association.new(self, *args)
       end
     end
   end

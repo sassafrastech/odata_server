@@ -5,12 +5,8 @@ module OData
         reflection.name.to_s
       end
 
-      def self.association_for(schema, reflection)
-        schema.Association(reflection)
-      end
-
       def initialize(schema, entity_type, reflection)
-        super(schema, entity_type, self.class.name_for(reflection), self.class.association_for(schema, reflection), :source => true)
+        super(schema, entity_type, self.class.name_for(reflection), Association(reflection), source: true)
       end
 
       def method_name
@@ -18,7 +14,7 @@ module OData
       end
 
       def find_all(one, key_values = {})
-        nil    
+        nil
       end
 
       def find_one(one, key_value = nil)

@@ -1,9 +1,12 @@
 module OData
   module AbstractSchema
     class End < SchemaObject
+      extend Forwardable
+      def_delegators :association, :schema
+
       cattr_reader :end_option_names
       @@end_option_names = %w{nullable multiple polymorphic}
-      
+
       @@end_option_names.each do |option_name|
         define_method(:"#{option_name.to_s}?") do
           !!self.options[option_name.to_sym]
@@ -14,13 +17,13 @@ module OData
       attr_reader :entity_type, :return_type
       attr_accessor :options
 
-      def initialize(schema, association, entity_type, return_type, name, options = {})
-        super(schema, name)
-        
+      def initialize(association, entity_type, return_type, name, options = {})
         @association = association
+        super(schema, name)
+
         @entity_type = entity_type
         @return_type = return_type
-        
+
         unless @entity_type.nil?
           @return_type ||= @entity_type.qualified_name
         end
@@ -30,7 +33,7 @@ module OData
           @options[key.to_sym] = options[key]
         end
       end
-      
+
       # def return_type
       #   @options[:multiple] ? 'Collection(' + @return_type.to_s + ')' : @return_type.to_s
       # end
@@ -42,7 +45,7 @@ module OData
         m = '*' if m == '1..*'
         m
       end
-      
+
       def inspect
         "#<< #{qualified_name.to_s}(return_type: #{@return_type.to_s}, to_multiplicity: #{to_multiplicity.to_s}) >>"
       end
