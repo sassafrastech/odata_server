@@ -5,8 +5,8 @@ module OData
         reflection.name.to_s
       end
 
-      def initialize(schema, entity_type, reflection)
-        super(schema, entity_type, self.class.name_for(reflection), Association(reflection))
+      def initialize(entity_type, reflection)
+        super(entity_type, self.class.name_for(reflection), Association(reflection))
       end
 
       def method_name

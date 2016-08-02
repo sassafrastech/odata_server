@@ -7,8 +7,8 @@ module OData
       attr_reader :entity_type
       attr_accessor :return_type, :nullable
 
-      def initialize(schema, entity_type, name, return_type = @@edm_null, nullable = true)
-        super(schema, entity_type, name)
+      def initialize(entity_type, name, return_type = @@edm_null, nullable = true)
+        super(entity_type, name)
 
         @entity_type = entity_type
         @return_type = 'Edm.String'
