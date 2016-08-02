@@ -1,10 +1,12 @@
 module OData
   module ActiveRecordSchema
     class Base < OData::AbstractSchema::Base
+      attr_reader :classes, :reflection
 
-      def initialize(namespace = 'OData', classes = [])
+      def initialize(namespace = 'OData', options = {})
         super(namespace)
-        classes = Array(classes)
+        @classes = Array(options[:classes])
+        @reflection = options[:reflection] || false
 
         if classes.any?
           path = classes.map { |klass| Rails.root.to_s + "/app/models/#{klass}.rb" }

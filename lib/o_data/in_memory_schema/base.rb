@@ -2,10 +2,10 @@ module OData
   module InMemorySchema
     class Base < OData::AbstractSchema::Base
       attr_reader :classes
-      
+
       def initialize(namespace = "OData", options = {})
         super(namespace)
-        @classes = options[:classes] || []
+        @classes = Array(options[:classes])
         self.register(classes)
       end
 
@@ -18,10 +18,10 @@ module OData
           if (find_entity_type(cls))
             raise OData::Core::Errors::EntityTypeAlreadyRegistered.new(cls.name)
           end
-            self.EntityType(cls, :reflect_on_associations => false, :key => key)
+          self.EntityType(cls, key: key)
         end
       end
-      
+
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
         @entity_types << entity_type
