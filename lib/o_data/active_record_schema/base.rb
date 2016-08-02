@@ -21,11 +21,7 @@ module OData
         Dir.glob(path).each { |file| require file }
 
         models.map do |active_record|
-          self.EntityType(active_record, reflect_on_associations: false)
-        end.map do |entity_type|
-          entity_type.active_record.reflect_on_all_associations.each do |reflection|
-            entity_type.NavigationProperty(reflection)
-          end
+          self.EntityType(active_record, reflect_on_associations: reflection)
         end
       end
 
