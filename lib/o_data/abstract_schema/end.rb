@@ -1,7 +1,11 @@
+require_relative 'mixins/schematize'
+
 module OData
   module AbstractSchema
-    class End < SchemaObject
+    class End
       extend Forwardable
+      include Mixins::Schematize
+
       def_delegators :association, :schema
 
       cattr_reader :end_option_names
@@ -14,12 +18,11 @@ module OData
       end
 
       attr_reader :entity_type, :association
-      attr_accessor :options
+      attr_accessor :options, :name
 
       def initialize(association, entity_type, name, options = {})
         @association = association
-        super(schema, name)
-
+        @name = name
         @entity_type = entity_type
 
         @options = {}

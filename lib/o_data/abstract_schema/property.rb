@@ -1,15 +1,19 @@
+require_relative 'mixins/schematize'
+
 module OData
   module AbstractSchema
-    class Property < SchemaObject
+    class Property
+      include Mixins::Schematize
+
       cattr_reader :edm_null
       @@edm_null = 'Edm.Null'.freeze
-      
-      attr_reader :entity_type
-      attr_accessor :return_type, :nullable
+
+      attr_reader :entity_type, :schema
+      attr_accessor :return_type, :nullable, :name
 
       def initialize(schema, entity_type, name, return_type = @@edm_null, nullable = true)
-        super(schema, name)
-
+        @schema = schema
+        @name = name
         @entity_type = entity_type
         @return_type = return_type
         @nullable = nullable
@@ -22,11 +26,11 @@ module OData
       def value_for(one)
         one.send(@name)
       end
-      
+
       def qualified_name
         @entity_type.qualified_name.to_s + '#' + self.name
       end
-      
+
       def inspect
         "#<< {qualified_name.to_s}(return_type: #{@return_type.to_s}, nullable: #{nullable?}) >>"
       end

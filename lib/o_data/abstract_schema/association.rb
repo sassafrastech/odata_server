@@ -1,18 +1,22 @@
+require_relative 'mixins/schematize'
+
 module OData
   module AbstractSchema
-    class Association < SchemaObject
+    class Association
       extend Forwardable
+      include Mixins::Schematize
+
       def_delegators :navigation_property, :schema, :entity_type
 
       cattr_reader :polymorphic_namespace_name
       @@polymorphic_namespace_name = '$polymorphic'
 
       attr_reader :navigation_property
-      attr_accessor :the_end
+      attr_accessor :the_end, :name
 
       def initialize(navigation_property, name, end_options = {})
         @navigation_property = navigation_property
-        super(schema, name)
+        @name = name
 
         End(end_options.delete(:entity_type), end_options.delete(:name), end_options)
       end

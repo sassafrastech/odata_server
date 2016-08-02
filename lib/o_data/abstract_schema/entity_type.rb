@@ -1,21 +1,20 @@
 require_relative 'mixins/serializable'
-require_relative 'mixins/comparable'
+require_relative 'mixins/schematize'
 
 module OData
   module AbstractSchema
-    class EntityType < SchemaObject
+    class EntityType
       include Mixins::Serializable::EntityTypeInstanceMethods
-      include Mixins::Comparable
+      include Mixins::Schematize
 
-      attr_accessor :properties, :navigation_properties
-      attr_reader :key_property
+      attr_accessor :properties, :navigation_properties, :name
+      attr_reader :key_property, :schema
 
       def initialize(schema, name)
-        super(schema, name)
-
+        @schema = schema
+        @name = name
         @properties = []
         @key_property = nil
-
         @navigation_properties = []
       end
 

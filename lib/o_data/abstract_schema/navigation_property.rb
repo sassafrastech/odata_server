@@ -1,12 +1,16 @@
+require_relative 'mixins/schematize'
+
 module OData
   module AbstractSchema
-    class NavigationProperty < SchemaObject
-      attr_reader :entity_type
-      attr_accessor :association, :the_end
+    class NavigationProperty
+      include Mixins::Schematize
+
+      attr_reader :entity_type, :schema
+      attr_accessor :association, :the_end, :name
 
       def initialize(schema, entity_type, name, association, options = {})
-        super(schema, name)
-
+        @schema = schema
+        @name = name
         @entity_type = entity_type
         @association = association
         @the_end = @association.the_end
