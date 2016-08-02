@@ -7,14 +7,14 @@ module OData
         :boolean   => 'Edm.Boolean',
         :byte      => 'Edm.Byte',
         :date      => 'Edm.Date',
-        :datetime  => 'Edm.DateTime',
+        :datetime  => 'Edm.DateTimeOffset',
+        :timestamp => 'Edm.DateTimeOffset',
         :float     => 'Edm.Decimal',
         :decimal   => 'Edm.Decimal',
         :integer   => 'Edm.Int32',
         :string    => 'Edm.String',
         :text      => 'Edm.String',
-        :timestamp => 'Edm.DateTime',
-        :time      => 'Edm.Time'
+        :time      => 'Edm.TimeOfDay'
       }.freeze
 
       attr_reader :column_adapter

@@ -28,7 +28,7 @@ module OData
         @active_record.columns.each do |column_adapter|
           property = self.Property(column_adapter)
 
-          if key_property_name == property.name
+          if key_property_name == property.name.underscore
             self.key_property = property
           end
         end
