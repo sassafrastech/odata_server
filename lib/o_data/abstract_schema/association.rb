@@ -11,22 +11,38 @@ module OData
       cattr_reader :polymorphic_namespace_name
       @@polymorphic_namespace_name = '$polymorphic'
 
-      attr_reader :navigation_property
-      attr_accessor :the_end
+      cattr_reader :end_option_names
+      @@end_option_names = %w{nullable multiple polymorphic}
 
-      def initialize(navigation_property, name, end_options = {})
+      @@end_option_names.each do |option_name|
+        define_method(:"#{option_name.to_s}?") do
+          !!self.options[option_name.to_sym]
+        end
+      end
+
+      attr_reader :navigation_property
+      attr_accessor :options
+
+      def initialize(navigation_property, name, options = {})
         @navigation_property = navigation_property
         @name = name
 
-        End(end_options.delete(:name), end_options)
+        @options = {}
+        options.keys.select { |key| @@end_option_names.include?(key.to_s) }.each do |key|
+          @options[key.to_sym] = options[key]
+        end
       end
 
-      def End(*args)
-        @the_end = End.new(self, *args)
+      def return_type
+        if options[:multiple]
+          'Collection(' + qualified_name + ')'
+        else
+          qualified_name
+        end
       end
 
       def inspect
-        "#<< #{qualified_name}(#{the_end.name}: #{the_end.return_type}) >>"
+        "#<< #{qualified_name}(#{name}: #{return_type}) >>"
       end
     end
   end

@@ -70,13 +70,13 @@ class ODataController < ApplicationController
       @countable = @last_segment.countable?
 
       @navigation_property = @last_segment.navigation_property
-      @polymorphic = @navigation_property.the_end.polymorphic?
+      @polymorphic = @navigation_property.association.polymorphic?
 
       if @polymorphic
         @entity_type = nil
-        @entity_type_name = @navigation_property.the_end.name.singularize
+        @entity_type_name = @navigation_property.name.singularize
       else
-        @entity_type = @navigation_property.the_end.entity_type
+        @entity_type = @navigation_property.entity_type
         @entity_type_name = @entity_type.name
       end
 
@@ -214,15 +214,15 @@ class ODataController < ApplicationController
         entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
           navigation_property_href = result_href + '/' + navigation_property.name
 
-          navigation_property_attrs = { :rel => "http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + navigation_property.name, :type => "application/atom+xml;type=#{navigation_property.the_end.multiple? ? 'feed' : 'entry'}", :title => navigation_property.name, :href => navigation_property_href }
+          navigation_property_attrs = { :rel => "http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + navigation_property.name, :type => "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}", :title => navigation_property.name, :href => navigation_property_href }
 
           if (options[:expand] || {}).keys.include?(navigation_property)
             xml.tag!(:link, navigation_property_attrs) do
               xml.m(:inline, :type => navigation_property_attrs[:type]) do
-                if navigation_property.the_end.multiple?
-                  o_data_atom_feed(xml, query, navigation_property.find_all(result), options.merge(:entity_type => navigation_property.the_end.entity_type, :expand => options[:expand][navigation_property]))
+                if navigation_property.association.multiple?
+                  o_data_atom_feed(xml, query, navigation_property.find_all(result), options.merge(:entity_type => navigation_property.entity_type, :expand => options[:expand][navigation_property]))
                 else
-                  o_data_atom_entry(xml, query, navigation_property.find_one(result), options.merge(:entity_type => navigation_property.the_end.entity_type, :expand => options[:expand][navigation_property]))
+                  o_data_atom_entry(xml, query, navigation_property.find_one(result), options.merge(:entity_type => navigation_property.entity_type, :expand => options[:expand][navigation_property]))
                 end
               end
             end
@@ -305,10 +305,10 @@ class ODataController < ApplicationController
 
             _json[navigation_property.name.to_s] = begin
               if (options[:expand] || {}).keys.include?(navigation_property)
-                if navigation_property.the_end.multiple?
-                  o_data_json_feed(query, navigation_property.find_all(result), options.merge(:entity_type => navigation_property.the_end.entity_type, :expand => options[:expand][navigation_property], :d => false))
+                if navigation_property.association.multiple?
+                  o_data_json_feed(query, navigation_property.find_all(result), options.merge(:entity_type => navigation_property.entity_type, :expand => options[:expand][navigation_property], :d => false))
                 else
-                  o_data_json_entry(query, navigation_property.find_one(result), options.merge(:entity_type => navigation_property.the_end.entity_type, :expand => options[:expand][navigation_property], :d => false))
+                  o_data_json_entry(query, navigation_property.find_one(result), options.merge(:entity_type => navigation_property.entity_type, :expand => options[:expand][navigation_property], :d => false))
                 end
               else
                 {

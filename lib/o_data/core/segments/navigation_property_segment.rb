@@ -14,19 +14,19 @@ module OData
           navigation_property = entity_type.navigation_properties.find { |np| np.name == schema_object_name }
           return nil if navigation_property.blank?
 
-          if navigation_property.the_end.polymorphic?
+          if navigation_property.association.polymorphic?
             raise OData::Core::Errors::CoreKeyValueException.new(query, key_values.keys.first, key_values.values.first) unless key_values.empty?
             raise OData::Core::Errors::CoreKeyValueException.new(query, '$polymorphic#Key', keys.first) unless keys.empty?
 
-            query.Segment(self, entity_type, navigation_property.the_end.return_type, navigation_property, {})
+            query.Segment(self, entity_type, navigation_property.return_type, navigation_property, {})
           else
-            sanitized_key_values = sanitize_key_values_and_keys_for!(query, navigation_property.the_end.entity_type, key_values, keys)
+            sanitized_key_values = sanitize_key_values_and_keys_for!(query, navigation_property.entity_type, key_values, keys)
 
             unless sanitized_key_values.empty?
-              raise OData::Core::Errors::CoreKeyValueException.new(query, sanitized_key_values.keys.first, sanitized_key_values.values.first) unless navigation_property.the_end.multiple?
+              raise OData::Core::Errors::CoreKeyValueException.new(query, sanitized_key_values.keys.first, sanitized_key_values.values.first) unless navigation_property.association.multiple?
             end
 
-            query.Segment(self, entity_type, navigation_property.the_end.entity_type, navigation_property, sanitized_key_values)
+            query.Segment(self, entity_type, navigation_property.entity_type, navigation_property, sanitized_key_values)
           end
         end
 
@@ -64,7 +64,7 @@ module OData
         end
 
         def multiple?
-          @navigation_property.the_end.multiple?
+          @navigation_property.association.multiple?
         end
 
         def value

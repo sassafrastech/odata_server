@@ -9,19 +9,18 @@ module OData
       def_delegators :@entity_type, :schema
 
       attr_reader :entity_type
-      attr_accessor :association, :the_end
+      attr_accessor :association
 
       def initialize(entity_type, name, association, options = {})
         @entity_type = entity_type
         @name = name
         @association = association
-        @the_end = @association.the_end
 
-        name = name.pluralize if @the_end.options[:multiple]
+        name = name.pluralize if @association.options[:multiple]
       end
 
       def return_type
-        the_end.return_type
+        association.return_type
       end
 
       def find_all(one, key_values = {})

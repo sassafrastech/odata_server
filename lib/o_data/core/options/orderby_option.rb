@@ -25,7 +25,7 @@ module OData
           if query.segments.last.respond_to?(:navigation_property)
             navigation_property = query.segments.last.navigation_property
 
-            raise OData::Core::Errors::InvalidOptionValue.new(query, self.option_name) if navigation_property.the_end.polymorphic?
+            raise OData::Core::Errors::InvalidOptionValue.new(query, self.option_name) if navigation_property.association.polymorphic?
           end
 
           raise OData::Core::Errors::InvalidOptionContext.new(query, self) unless query.segments.last.respond_to?(:countable?) && query.segments.last.countable?

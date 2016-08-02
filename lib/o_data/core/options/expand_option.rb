@@ -27,7 +27,7 @@ module OData
           if query.segments.last.respond_to?(:navigation_property)
             navigation_property = query.segments.last.navigation_property
 
-            raise OData::Core::Errors::InvalidOptionValue.new(query, self.option_name) if navigation_property.the_end.polymorphic?
+            raise OData::Core::Errors::InvalidOptionValue.new(query, self.option_name) if navigation_property.association.polymorphic?
           end
 
           if query.segments.last.respond_to?(:entity_type)
@@ -64,10 +64,10 @@ module OData
           elsif navigation_property = entity_type.navigation_properties.find { |np| np.name == head }
             acc[navigation_property] ||= {}
 
-            if navigation_property.the_end.polymorphic?
+            if navigation_property.association.polymorphic?
               raise OData::Core::Errors::InvalidOptionValue.new(query, head) unless rest.empty?
             else
-              reflect_on_navigation_property_path(query, acc[navigation_property], navigation_property.the_end.entity_type, rest.shift, rest)
+              reflect_on_navigation_property_path(query, acc[navigation_property], navigation_property.entity_type, rest.shift, rest)
             end
 
             acc
