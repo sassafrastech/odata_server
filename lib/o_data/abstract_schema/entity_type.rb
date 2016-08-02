@@ -1,11 +1,11 @@
-require_relative 'serializable'
-require_relative 'comparable'
+require_relative 'mixins/serializable'
+require_relative 'mixins/comparable'
 
 module OData
   module AbstractSchema
     class EntityType < SchemaObject
-      include Serializable::EntityTypeInstanceMethods
-      include Comparable
+      include Mixins::Serializable::EntityTypeInstanceMethods
+      include Mixins::Comparable
 
       attr_accessor :properties, :navigation_properties
       attr_reader :key_property

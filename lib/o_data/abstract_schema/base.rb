@@ -1,9 +1,9 @@
-require_relative 'serializable'
+require_relative 'mixins/serializable'
 
 module OData
   module AbstractSchema
     class Base
-      include Serializable::SchemaInstanceMethods
+      include Mixins::Serializable::SchemaInstanceMethods
 
       attr_accessor :namespace
       attr_accessor :entity_types

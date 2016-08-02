@@ -1,9 +1,9 @@
-require_relative 'serializable'
+require_relative 'mixins/serializable'
 
 module OData
   module ActiveRecordSchema
     class EntityType < OData::AbstractSchema::EntityType
-      include Serializable::EntityTypeInstanceMethods
+      include Mixins::Serializable::EntityTypeInstanceMethods
 
       def self.name_for(active_record_or_str)
         name = active_record_or_str.is_a?(ActiveRecord::Base) ? active_record_or_str.name : active_record_or_str.to_s
@@ -33,7 +33,7 @@ module OData
           end
         end
         
-        OData::AbstractSchema::Serializable.atom_element_names.each do |atom_element_name|
+        OData::AbstractSchema::Mixins::Serializable.atom_element_names.each do |atom_element_name|
           o_data_active_record_method_name = :"o_data_atom_#{atom_element_name}"
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
           

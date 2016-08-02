@@ -1,7 +1,9 @@
+require_relative 'mixins/comparable'
+
 module OData
   module AbstractSchema
     class SchemaObject
-      include Comparable
+      include Mixins::Comparable
 
       attr_reader :schema
       attr_accessor :name
