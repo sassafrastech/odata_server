@@ -4,8 +4,7 @@ class ODataController < ApplicationController
 
   @@o_data_atom_xmlns = {
     "xmlns"   => "http://www.w3.org/2005/Atom",
-    "xmlns:d" => "http://schemas.microsoft.com/ado/2007/08/dataservices",
-    "xmlns:m" => "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+    "xmlns:m" => "http://docs.oasis-open.org/odata/ns/metadata"
   }.freeze
 
   helper_method :o_data_atom_feed, :o_data_atom_entry, :o_data_json_feed, :o_data_json_entry
