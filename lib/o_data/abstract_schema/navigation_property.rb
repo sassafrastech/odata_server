@@ -3,15 +3,17 @@ require_relative 'mixins/schematize'
 module OData
   module AbstractSchema
     class NavigationProperty
+      extend Forwardable
       include Mixins::Schematize
 
-      attr_reader :entity_type, :schema
+      def_delegators :@entity_type, :schema
+
+      attr_reader :entity_type
       attr_accessor :association, :the_end, :name
 
-      def initialize(schema, entity_type, name, association, options = {})
-        @schema = schema
-        @name = name
+      def initialize(entity_type, name, association, options = {})
         @entity_type = entity_type
+        @name = name
         @association = association
         @the_end = @association.the_end
 

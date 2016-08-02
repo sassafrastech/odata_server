@@ -7,8 +7,8 @@ module OData
       include Mixins::Serializable::EntityTypeInstanceMethods
       include Mixins::Schematize
 
-      attr_accessor :properties, :navigation_properties, :name
       attr_reader :key_property, :schema
+      attr_accessor :properties, :navigation_properties, :name
 
       def initialize(schema, name)
         @schema = schema
@@ -25,13 +25,13 @@ module OData
       end
 
       def Property(*args)
-        property = Property.new(self.schema, self, *args)
+        property = Property.new(self, *args)
         @properties << property
         property
       end
 
       def NavigationProperty(*args)
-        navigation_property = NavigationProperty.new(self.schema, self, *args)
+        navigation_property = NavigationProperty.new(self, *args)
         @navigation_properties << navigation_property
         navigation_property
       end

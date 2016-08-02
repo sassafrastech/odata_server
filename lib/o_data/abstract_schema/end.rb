@@ -6,7 +6,7 @@ module OData
       extend Forwardable
       include Mixins::Schematize
 
-      def_delegators :association, :schema
+      def_delegators :@association, :schema
 
       cattr_reader :end_option_names
       @@end_option_names = %w{nullable multiple polymorphic}
@@ -17,13 +17,12 @@ module OData
         end
       end
 
-      attr_reader :entity_type, :association
+      attr_reader :association
       attr_accessor :options, :name
 
-      def initialize(association, entity_type, name, options = {})
+      def initialize(association, name, options = {})
         @association = association
         @name = name
-        @entity_type = entity_type
 
         @options = {}
         options.keys.select { |key| @@end_option_names.include?(key.to_s) }.each do |key|

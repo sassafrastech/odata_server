@@ -6,7 +6,7 @@ module OData
       extend Forwardable
       include Mixins::Schematize
 
-      def_delegators :navigation_property, :schema, :entity_type
+      def_delegators :@navigation_property, :schema, :entity_type
 
       cattr_reader :polymorphic_namespace_name
       @@polymorphic_namespace_name = '$polymorphic'
@@ -18,7 +18,7 @@ module OData
         @navigation_property = navigation_property
         @name = name
 
-        End(end_options.delete(:entity_type), end_options.delete(:name), end_options)
+        End(end_options.delete(:name), end_options)
       end
 
       def End(*args)

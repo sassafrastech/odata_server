@@ -17,6 +17,14 @@ module OData
         :time      => 'Edm.Time'
       }.freeze
 
+      attr_reader :column_adapter
+
+      def initialize(entity_type, column_adapter)
+        super(entity_type, self.class.name_for(column_adapter), self.class.return_type_for(column_adapter), self.class.nullable?(column_adapter))
+
+        @column_adapter = column_adapter
+      end
+
       def self.return_type_for(column_adapter)
         @@column_adapter_return_types[column_adapter.type]
       end
@@ -27,14 +35,6 @@ module OData
 
       def self.nullable?(column_adapter)
         column_adapter.null
-      end
-
-      attr_reader :column_adapter
-
-      def initialize(schema, entity_type, column_adapter)
-        super(schema, entity_type, self.class.name_for(column_adapter), self.class.return_type_for(column_adapter), self.class.nullable?(column_adapter))
-
-        @column_adapter = column_adapter
       end
 
       def value_for(one)

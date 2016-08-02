@@ -3,7 +3,10 @@ require_relative 'mixins/schematize'
 module OData
   module AbstractSchema
     class Property
+      extend Forwardable
       include Mixins::Schematize
+
+      def_delegators :@entity_type, :schema
 
       cattr_reader :edm_null
       @@edm_null = 'Edm.Null'.freeze
@@ -11,10 +14,9 @@ module OData
       attr_reader :entity_type, :schema
       attr_accessor :return_type, :nullable, :name
 
-      def initialize(schema, entity_type, name, return_type = @@edm_null, nullable = true)
-        @schema = schema
-        @name = name
+      def initialize(entity_type, name, return_type = @@edm_null, nullable = true)
         @entity_type = entity_type
+        @name = name
         @return_type = return_type
         @nullable = nullable
       end
