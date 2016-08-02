@@ -10,7 +10,7 @@ module OData
       end
 
       def qualified_name
-        @schema.qualify(@name)
+        schema.qualify(name)
       end
 
       include Comparable

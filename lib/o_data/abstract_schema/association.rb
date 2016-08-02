@@ -2,7 +2,7 @@ module OData
   module AbstractSchema
     class Association < SchemaObject
       extend Forwardable
-      def_delegators :navigation_property, :schema
+      def_delegators :navigation_property, :schema, :entity_type
 
       cattr_reader :polymorphic_namespace_name
       @@polymorphic_namespace_name = '$polymorphic'
@@ -14,7 +14,7 @@ module OData
         @navigation_property = navigation_property
         super(schema, name)
 
-        End(end_options.delete(:entity_type), end_options.delete(:return_type), end_options.delete(:name), end_options)
+        End(end_options.delete(:entity_type), end_options.delete(:name), end_options)
       end
 
       def End(*args)
@@ -22,7 +22,7 @@ module OData
       end
 
       def inspect
-        "#<< #{qualified_name.to_s}(#{the_end.name.to_s}: #{the_end.return_type.to_s}) >>"
+        "#<< #{qualified_name}(#{the_end.name}: #{the_end.return_type}) >>"
       end
     end
   end

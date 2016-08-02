@@ -3,7 +3,7 @@ module OData
     class Association < OData::AbstractSchema::Association
 
       def self.name_for(reflection)
-        EntityType.name_for(reflection.active_record) + '#' + reflection.name.to_s
+        reflection.name.to_s
       end
 
       def nullable?(active_record, association_columns)
@@ -87,8 +87,6 @@ module OData
       def end_options_for(reflection)
         Rails.logger.info("Processing #{reflection.active_record}")
 
-        entity_type = navigation_property.entity_type
-
         polymorphic = reflection.options[:polymorphic] == true # || reflection.options[:as]
 
         multiple = [:has_many, :has_and_belongs_to_many].include?(reflection.macro)
@@ -100,10 +98,10 @@ module OData
             true
           end
 
-        name = entity_type.name
+        name = self.class.name_for(reflection)
         name = name.pluralize if multiple
 
-        { name: name, entity_type: entity_type, return_type: entity_type.qualified_name, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
+        { name: name, entity_type: entity_type, multiple: multiple, nullable: nullable, polymorphic: polymorphic }
       end
 
       attr_reader :reflection

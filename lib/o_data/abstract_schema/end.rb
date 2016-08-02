@@ -13,20 +13,14 @@ module OData
         end
       end
 
-      attr_reader :association
-      attr_reader :entity_type, :return_type
+      attr_reader :entity_type, :association
       attr_accessor :options
 
-      def initialize(association, entity_type, return_type, name, options = {})
+      def initialize(association, entity_type, name, options = {})
         @association = association
         super(schema, name)
 
         @entity_type = entity_type
-        @return_type = return_type
-
-        unless @entity_type.nil?
-          @return_type ||= @entity_type.qualified_name
-        end
 
         @options = {}
         options.keys.select { |key| @@end_option_names.include?(key.to_s) }.each do |key|
@@ -34,9 +28,17 @@ module OData
         end
       end
 
-      # def return_type
-      #   @options[:multiple] ? 'Collection(' + @return_type.to_s + ')' : @return_type.to_s
-      # end
+      def return_type
+        if options[:multiple]
+          'Collection(' + qualified_name + ')'
+        else
+          qualified_name
+        end
+      end
+
+      def qualified_name
+        schema.qualify(name.camelize)
+      end
 
       def to_multiplicity
         m = (@options[:nullable] ? '0' : '1') + '..' + (@options[:multiple] ? '*' : '1')
@@ -47,7 +49,7 @@ module OData
       end
 
       def inspect
-        "#<< #{qualified_name.to_s}(return_type: #{@return_type.to_s}, to_multiplicity: #{to_multiplicity.to_s}) >>"
+        "#<< #{qualified_name}(return_type: #{return_type}, to_multiplicity: #{to_multiplicity}) >>"
       end
     end
   end

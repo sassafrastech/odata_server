@@ -42,6 +42,11 @@ module OData
       def Association(*args)
         self.association = Association.new(self, *args)
       end
+
+      def partner
+        p = Object.const_get(name.camelize).reflections[entity_type.name.to_sym]
+        p.name.camelize if p
+      end
     end
   end
 end
