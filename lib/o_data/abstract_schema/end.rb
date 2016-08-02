@@ -18,7 +18,7 @@ module OData
       end
 
       attr_reader :association
-      attr_accessor :options, :name
+      attr_accessor :options
 
       def initialize(association, name, options = {})
         @association = association

@@ -8,7 +8,7 @@ module OData
       include Mixins::Schematize
 
       attr_reader :key_property, :schema
-      attr_accessor :properties, :navigation_properties, :name
+      attr_accessor :properties, :navigation_properties
 
       def initialize(schema, name)
         @schema = schema

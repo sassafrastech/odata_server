@@ -12,7 +12,7 @@ module OData
       @@edm_null = 'Edm.Null'.freeze
 
       attr_reader :entity_type, :schema
-      attr_accessor :return_type, :nullable, :name
+      attr_accessor :return_type, :nullable
 
       def initialize(entity_type, name, return_type = @@edm_null, nullable = true)
         @entity_type = entity_type

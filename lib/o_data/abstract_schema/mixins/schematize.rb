@@ -16,6 +16,10 @@ module OData
           1
         end
 
+        def name
+          @name.camelize
+        end
+
         def singular_name
           name.to_s.singularize
         end
@@ -25,7 +29,7 @@ module OData
         end
 
         def inspect
-          "#<< #{@schema.namespace}(<< #{@name.inspect}: #{self.class.name.to_s} >>) >>"
+          "#<< #{schema.namespace}(<< #{name.inspect}: #{self.class.name.to_s} >>) >>"
         end
 
       end

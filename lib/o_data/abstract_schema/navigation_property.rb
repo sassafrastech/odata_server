@@ -9,7 +9,7 @@ module OData
       def_delegators :@entity_type, :schema
 
       attr_reader :entity_type
-      attr_accessor :association, :the_end, :name
+      attr_accessor :association, :the_end
 
       def initialize(entity_type, name, association, options = {})
         @entity_type = entity_type
@@ -18,10 +18,6 @@ module OData
         @the_end = @association.the_end
 
         name = name.pluralize if @the_end.options[:multiple]
-      end
-
-      def camelized_name
-        name.camelize
       end
 
       def return_type

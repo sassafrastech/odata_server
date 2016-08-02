@@ -12,7 +12,7 @@ module OData
       @@polymorphic_namespace_name = '$polymorphic'
 
       attr_reader :navigation_property
-      attr_accessor :the_end, :name
+      attr_accessor :the_end
 
       def initialize(navigation_property, name, end_options = {})
         @navigation_property = navigation_property
