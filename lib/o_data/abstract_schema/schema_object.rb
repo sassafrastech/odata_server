@@ -1,6 +1,8 @@
 module OData
   module AbstractSchema
     class SchemaObject
+      include Comparable
+
       attr_reader :schema
       attr_accessor :name
 
@@ -12,8 +14,6 @@ module OData
       def qualified_name
         schema.qualify(name)
       end
-
-      include Comparable
 
       def <=>(other)
         return qualified_name <=> other.qualified_name if other.is_a?(OData::SchemaObject)

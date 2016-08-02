@@ -9,9 +9,9 @@ module OData
       def sort(many, property_order_pairs = [])
         [many].compact.flatten.sort { |a, b| compare(a, b, property_order_pairs) }
       end
-      
+
       protected
-      
+
       def _compare(a, b, head, rest)
         return 0 if head.blank?
 
@@ -38,5 +38,3 @@ module OData
     end # Comparable
   end # AbstractSchema
 end # OData
-
-OData::AbstractSchema::EntityType.send(:include, OData::AbstractSchema::Comparable)

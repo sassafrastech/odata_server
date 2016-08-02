@@ -1,6 +1,10 @@
+require_relative 'serializable'
+
 module OData
   module AbstractSchema
     class Base
+      include Serializable::SchemaInstanceMethods
+
       attr_accessor :namespace
       attr_accessor :entity_types
 

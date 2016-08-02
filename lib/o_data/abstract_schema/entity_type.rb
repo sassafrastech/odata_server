@@ -1,9 +1,14 @@
+require_relative 'serializable'
+require_relative 'comparable'
+
 module OData
   module AbstractSchema
     class EntityType < SchemaObject
-      attr_accessor :properties
+      include Serializable::EntityTypeInstanceMethods
+      include Comparable
 
-      attr_accessor :navigation_properties
+      attr_accessor :properties, :navigation_properties
+      attr_reader :key_property
 
       def initialize(schema, name)
         super(schema, name)
@@ -13,8 +18,6 @@ module OData
 
         @navigation_properties = []
       end
-      
-      attr_reader :key_property
 
       def key_property=(property)
         return nil unless property.is_a?(Property)
@@ -33,24 +36,24 @@ module OData
         @navigation_properties << navigation_property
         navigation_property
       end
-      
+
       def find_property(property_name)
-        property = @properties.find { |p| p.name == property_name }
+        @properties.find { |p| p.name == property_name }
       end
 
       def find_all(key_values = {}, options = nil)
         []
       end
-      
+
       def find_one(key_value)
         return nil if @key_property.blank?
         find_all(@key_property => key_value).first
       end
-      
+
       def exists?(key_value)
         !!find_one(key_value)
       end
-      
+
       def href_for(one)
         @name + '(' + primary_key_for(one).to_s + ')'
       end
@@ -59,12 +62,12 @@ module OData
         return nil if @key_property.blank?
         @key_property.value_for(one)
       end
-      
+
       def inspect
         "#<< #{qualified_name.to_s}(#{[@properties, @navigation_properties].flatten.collect { |p| "#{p.name.to_s}: #{p.return_type.to_s}" }.join(', ')}) >>"
       end
-      
-      def filter(results, filter) 
+
+      def filter(results, filter)
         results.collect do |entity|
           filter.apply(self, entity)
         end.compact

@@ -1,6 +1,10 @@
+require_relative 'serializable'
+
 module OData
   module ActiveRecordSchema
-    class EntityType < OData::AbstractSchema::EntityType      
+    class EntityType < OData::AbstractSchema::EntityType
+      include Serializable::EntityTypeInstanceMethods
+
       def self.name_for(active_record_or_str)
         name = active_record_or_str.is_a?(ActiveRecord::Base) ? active_record_or_str.name : active_record_or_str.to_s
         name.gsub('::', '')
