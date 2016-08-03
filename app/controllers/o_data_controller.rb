@@ -153,7 +153,7 @@ class ODataController < ApplicationController
 
     respond_to do |format|
       format.json do
-        render json: { error: { code: nil, message: ex.message } }
+        render json: { error: { code: "", message: ex.message } }
       end
     end
   end
