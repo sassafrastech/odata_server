@@ -149,10 +149,12 @@ class ODataController < ApplicationController
   end
 
   def handle_exception(ex)
-    request.format = :xml
+    request.format = :json
 
     respond_to do |format|
-      format.xml { render :inline => "xml.instruct!; xml.error('xmlns' => 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata') { xml.code(code.to_s); xml.message(message); xml.uri(uri) }", :type => :builder, :locals => { :code => nil, :message => ex.message, :uri => request.url } }
+      format.json do
+        render json: { error: { code: nil, message: ex.message } }
+      end
     end
   end
 
