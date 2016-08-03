@@ -23,7 +23,9 @@ module OData
       end
 
       def to_json
-        { "d" => { "EntitySets" => @entity_types.collect(&:plural_name).sort } }.to_json
+        @entity_types.map do |entity|
+          { name: entity.plural_name, kind: 'EntitySet', url: entity.plural_name }
+        end
       end
     end
   end

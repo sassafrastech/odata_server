@@ -32,7 +32,13 @@ class ODataController < ApplicationController
   def service
     respond_to do |format|
       format.xml  # service.xml.builder
-      format.json { render :json => @@data_services.to_json }
+      format.json do
+        json = {
+          "@odata.context" => o_data_engine.metadata_url,
+          value: @@data_services.to_json
+        }
+        render json: json
+      end
     end
   end
 
@@ -256,10 +262,9 @@ class ODataController < ApplicationController
     entity_type = options[:entity_type] || query.data_services.find_entity_type(results.first.class)
 
     results_json = {
-      "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}"
+      "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}",
+      value: results.collect { |result| o_data_json_entry(query, result, options.merge(deferred: false)) }
     }
-
-    results_json[:value] = results.collect { |result| o_data_json_entry(query, result, options.merge(deferred: false)) }
 
     if inlinecount_option = query.options.find { |o| o.option_name == OData::Core::Options::InlinecountOption.option_name }
       if inlinecount_option.value == 'allpages'
