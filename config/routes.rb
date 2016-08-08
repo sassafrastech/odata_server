@@ -6,5 +6,8 @@ OData::Engine.routes.draw do
   get ':wtfrails' => "o_data#metadata", as: :metadata,
                                         defaults: { format: 'xml', wtfrails: '$metadata' },
                                         constraints: { wtfrails: /\$metadata/ }
+  match '/:wtfrails' => "o_data#options", via: :options,
+                                          defaults: { wtfrails: '$metadata' },
+                                          constraints: { wtfrails: /\$metadata/ }
   get '*path' => "o_data#resource", as: :resource, defaults: { format: 'json' }
 end

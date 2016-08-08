@@ -2,6 +2,8 @@ class ODataController < ApplicationController
   include ActionController::MimeResponds
   include ActionController::Helpers
 
+  skip_before_action :verify_authenticity_token, only: :options
+
   @@o_data_atom_xmlns = {
     "xmlns"   => "http://www.w3.org/2005/Atom",
     "xmlns:m" => "http://docs.oasis-open.org/odata/ns/metadata"
@@ -46,6 +48,10 @@ class ODataController < ApplicationController
     respond_to do |format|
       format.xml  # metadata.xml.builder
     end
+  end
+
+  def options
+    render text: 'Allow: GET,OPTIONS', status: :ok
   end
 
   def resource
