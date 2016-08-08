@@ -74,6 +74,7 @@ class ODataController < ApplicationController
       end
     when OData::Core::Segments::NavigationPropertySegment.segment_name
       @countable = @last_segment.countable?
+      @results = Array(@results).compact
 
       @navigation_property = @last_segment.navigation_property
       @polymorphic = @navigation_property.association.polymorphic?
@@ -99,6 +100,7 @@ class ODataController < ApplicationController
       end
     when OData::Core::Segments::CollectionSegment.segment_name
       @countable = @last_segment.countable?
+      @results = Array(@results).compact
 
       @navigation_property = nil
       @polymorphic = true
@@ -111,7 +113,7 @@ class ODataController < ApplicationController
       end
 
       respond_to do |format|
-        format.atom # resource.atom.builder
+        format.xml # resource.xml.builder
         format.json # resource.json.erb
       end
     else
@@ -261,7 +263,7 @@ class ODataController < ApplicationController
   end
 
   def o_data_json_feed(query, results, options = {})
-    entity_type = options[:entity_type] || query.data_services.find_entity_type(results.first.class)
+    entity_type = options[:entity_type] || query.segments.first.entity_type
 
     results_json = {
       "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}",
