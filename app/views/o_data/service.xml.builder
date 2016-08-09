@@ -6,7 +6,7 @@ xml.tag!(:service, 'xmlns' => 'http://www.w3.org/2007/app',
                    'metadata:context' => '$metadata') do
   ODataController.data_services.schemas.each do |schema|
     xml.tag!(:workspace) do
-      xml.atom(:title, schema.namespace, type: :text)
+      xml.atom(:title, 'Default', type: :text)
       schema.entity_types.map(&:plural_name).sort.each do |plural_name|
         next if plural_name.include?('HABTM')
         xml.tag!(:collection, href: plural_name) do

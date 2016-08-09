@@ -27,7 +27,7 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
           end
         end
 
-        xml.tag!(:EntityContainer, Name: schema.namespace) do
+        xml.tag!(:EntityContainer, Name: "#{schema.namespace}Service") do
           schema.entity_types.sort_by(&:qualified_name).each do |entity_type|
             next if entity_type.plural_name.include?('HABTM')
             xml.tag!(:EntitySet, Name: entity_type.plural_name, EntityType: entity_type.qualified_name) do
