@@ -1,11 +1,6 @@
 module ResourceRenderer
   extend ActiveSupport::Concern
 
-  ODataAtomXmlns = {
-    "xmlns"   => "http://www.w3.org/2005/Atom",
-    "xmlns:m" => "http://docs.oasis-open.org/odata/ns/metadata"
-  }.freeze
-
   def get_selected_properties_for(query, entity_type)
     if select_option = query.options.find { |o| o.option_name == OData::Core::Options::SelectOption.option_name }
       if select_option.entity_type == entity_type

@@ -1,6 +1,11 @@
 module ResourceXmlRenderer
   extend ActiveSupport::Concern
 
+  ODataAtomXmlns = {
+    "xmlns"   => "http://www.w3.org/2005/Atom",
+    "xmlns:m" => "http://docs.oasis-open.org/odata/ns/metadata"
+  }.freeze
+
   included do
     helper_method :o_data_atom_feed, :o_data_atom_entry
   end
@@ -16,7 +21,7 @@ module ResourceXmlRenderer
 
     results_title = options.delete(:title) || results_href
 
-    xml.tag!(:feed, { "xml:base" => o_data_engine.service_url }.merge(options[:hide_xmlns] ? {} : ResourceRenderer::ODataAtomXmlns)) do
+    xml.tag!(:feed, { "xml:base" => o_data_engine.service_url }.merge(options[:hide_xmlns] ? {} : ODataAtomXmlns)) do
       xml.tag!(:title, results_title)
       xml.tag!(:id, results_url)
       xml.tag!(:link, :rel => "self", :title => results_title, :href => results_href)
@@ -53,7 +58,7 @@ module ResourceXmlRenderer
     result_summary = entity_type.atom_summary_for(result)
     result_updated_at = entity_type.atom_updated_at_for(result)
 
-    xml.tag!(:entry, {}.merge(options[:hide_xmlns] ? {} : ResourceRenderer::ODataAtomXmlns)) do
+    xml.tag!(:entry, {}.merge(options[:hide_xmlns] ? {} : ODataAtomXmlns)) do
       xml.tag!(:id, result_url) unless result_href.blank?
       xml.tag!(:title, result_title, :type => "text") unless result_title.blank?
       xml.tag!(:summary, result_summary, :type => "text") unless result_summary.blank?
