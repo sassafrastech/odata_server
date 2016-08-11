@@ -74,7 +74,7 @@ module ResourceXmlRenderer
         entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
           navigation_property_href = result_href + '/' + navigation_property.name
 
-          navigation_property_attrs = { :rel => "http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + navigation_property.name, :type => "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}", :title => navigation_property.name, :href => navigation_property_href }
+          navigation_property_attrs = { :rel => "http://docs.oasis-open.org/odata/ns/relatedlinks/" + navigation_property.name, :type => "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}", :title => navigation_property.name, :href => navigation_property_href }
 
           if (options[:expand] || {}).keys.include?(navigation_property)
             xml.tag!(:link, navigation_property_attrs) do
@@ -92,7 +92,7 @@ module ResourceXmlRenderer
         end
       end
 
-      xml.tag!(:category, :term => entity_type.qualified_name, :scheme => "http://schemas.microsoft.com/ado/2007/08/dataservices/scheme")
+      xml.tag!(:category, :term => entity_type.qualified_name, :scheme => "http://docs.oasis-open.org/odata/ns/scheme")
 
       unless (properties = get_selected_properties_for(query, entity_type)).empty?
         xml.tag!(:content, :type => "application/xml") do
