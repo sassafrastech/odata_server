@@ -1,4 +1,4 @@
-## OData Server
+# OData Server
 
 This is a rails plugin/engine to embue your application with OData features (so its data can be readily
 consumed by an OData client).
@@ -20,12 +20,72 @@ and
 This code is not heavily tested.  It is alpha quality at best.   Expect the API to change drastically over
 time.
 
-See https://github.com/lmcalpin/odata_provider_example_rb for an example application that
-uses this gem.
-
-### Resources
+## Resources
 
 **OData V4**:
 
-* http://www.odata.org/
-* http://www.odata.org/documentation/
+* http://www.odata.org
+* http://www.odata.org/documentation
+
+## Dependencies
+
+Rails 4 or greater.
+
+## Installation
+
+Put this line in your Gemfile:
+
+```
+gem 'odata_server'
+```
+
+Run the bundle command to install it.
+
+Then add the following lines to an initializer (ex: `odata_server.rb`):
+
+```
+# ActiveRecordSchema
+
+ar_schema = OData::ActiveRecordSchema::Base.new('AR', classes: Foo)
+OData::Edm::DataServices.schemas << ar_schema
+
+# OR
+
+OData::Edm::DataServices.schemas << OData::ActiveRecordSchema::Base.new
+```
+
+By giving a list of classes to ActiveRecordSchema, it will represent only theses classes. Without `classes` option, all the models will be represented.
+ActiveRecordSchema can take a `reflection` option too (default is false): if true the models associations will be shown.
+
+```
+# InMemorySchema
+
+class Foo
+  attr_reader :foo, :bar, :baz
+
+  def initialize(foo, bar, baz)
+    @foo = foo
+    @bar = bar
+    @baz = baz
+  end
+end
+
+inmem = OData::InMemorySchema::Base.new("InMem", classes: Foo)
+OData::Edm::DataServices.schemas << inmem
+(1..20).each do |n|
+  inmem.find_entity_type("Foo").entities.append(Foo.new(n, "test", "test #{n}"))
+end
+```
+
+ActiveRecordSchema and InMemorySchema can either take a single classe or an array of classes.
+
+Then, mount the `OData::Engine` in `routes.rb`:
+
+```
+mount OData::Engine, at: '/service/OData'
+```
+
+Restart your sever and you can visit the `/service/Odata` url that is the service base.
+
+See https://github.com/lmcalpin/odata_provider_example_rb for an example application that
+uses this gem.
