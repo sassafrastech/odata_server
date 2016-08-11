@@ -17,9 +17,9 @@ class ODataController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: :options
 
-  before_filter :extract_resource_path_and_query_string, :only => [:resource]
-  before_filter :parse_resource_path_and_query_string!,  :only => [:resource]
-  before_filter :set_request_format!,                    :only => [:resource]
+  before_action :extract_resource_path_and_query_string, :only => [:resource]
+  before_action :parse_resource_path_and_query_string!,  :only => [:resource]
+  before_action :set_request_format!,                    :only => [:resource]
   after_action :set_header
 
   %w{service metadata resource}.each do |method_name|
