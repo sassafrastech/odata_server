@@ -49,7 +49,7 @@ class ODataController < ApplicationController
   end
 
   def options
-    render text: 'Allow: GET,OPTIONS', status: :ok
+    render text: 'Allow: GET', status: :ok
   end
 
   def resource
