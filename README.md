@@ -3,11 +3,11 @@
 This is a rails plugin/engine to embue your application with OData features (so its data can be readily
 consumed by an OData client).
 
-In OData, a service exposes a number of workspace.  Each workspace is backed by a schema and contains
-a collection of entity collections.  An entity collection is a related set of records.
+In OData, a service exposes a number of workspace. Each workspace is backed by a schema and contains
+a collection of entity collections. An entity collection is a related set of records.
 
-Configure the plugin by adding a number of schema objects to OData::Edm::DataServices.schemas.  Each
-schema is an instance of a subclass of OData::AbstractSchema::Base.  We currently only support two
+Configure the plugin by adding a number of schema objects to `OData::Edm::DataServices.schemas`. Each
+schema is an instance of a subclass of `OData::AbstractSchema::Base`. We currently only support two
 implementations, and the specific implementation determines how to load the records, mapping the
 records' properties to/from Edm data types, and handling filtering, sorting, and data retrieval.
 
@@ -17,8 +17,9 @@ and
 
 - OData::InMemorySchema::Base -- this takes in a list of objects which are exposed as OData entities
 
-This code is not heavily tested.  It is alpha quality at best.   Expect the API to change drastically over
-time.
+The accessible OData service will be a read-only provider.
+
+This code is not heavily tested.  It is alpha quality at best. Expect the API to change drastically over time.
 
 ## Resources
 
@@ -29,7 +30,7 @@ time.
 
 ## Dependencies
 
-Rails 4 or greater.
+Rails 4 or higher.
 
 ## Installation
 
@@ -89,3 +90,8 @@ Restart your sever and you can visit the `/service/Odata` url that is the servic
 
 See https://github.com/lmcalpin/odata_provider_example_rb for an example application that
 uses this gem.
+
+## TODOS
+
+* Update the core for OData v4
+* Update and add more tests
