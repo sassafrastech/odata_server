@@ -61,20 +61,20 @@ class ODataController < ApplicationController
     when OData::Core::Segments::CountSegment.segment_name
       render :text => @results.to_i
     when OData::Core::Segments::LinksSegment.segment_name
-      request.format = :xml unless request.format == :json
+      request.format = :atom unless request.format == :json
 
       respond_to do |format|
-        format.xml  { render :inline => "xml.instruct!; @results.empty? ? xml.links('xmlns' => 'http://www.w3.org/2005/Atom') : xml.links('xmlns' => 'http://www.w3.org/2005/Atom') { @results.each { |r| xml.uri(o_data_engine.resource_url(r[1])) } }", :type => :builder }
+        format.atom  { render :inline => "xml.instruct!; @results.empty? ? xml.links('xmlns' => 'http://www.w3.org/2005/Atom') : xml.links('xmlns' => 'http://www.w3.org/2005/Atom') { @results.each { |r| xml.uri(o_data_engine.resource_url(r[1])) } }", :type => :builder }
         format.json { render :json => { "links" => @results.collect { |r| { "uri" => r } } }.to_json }
       end
     when OData::Core::Segments::ValueSegment.segment_name
       render :text => @results.to_s
     when OData::Core::Segments::PropertySegment.segment_name
-      request.format = :xml unless request.format == :json
+      request.format = :atom unless request.format == :json
       path = @query.segments.map(&:value).join('/')
 
       respond_to do |format|
-        format.xml  { render :inline => "xml.instruct!; value.blank? ? xml.tag!(key.to_sym, 'm:null' => true, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:m' => 'http://docs.oasis-open.org/odata/ns/metadata') : xml.tag!(key.to_sym, value, 'edm:Type' => type, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:edm' => 'http://docs.oasis-open.org/odata/ns/edm')", :locals => { :key => @results.keys.first.name, :type => @results.keys.first.return_type, :value => @results.values.first }, :type => :builder }
+        format.atom  { render :inline => "xml.instruct!; value.blank? ? xml.tag!(key.to_sym, 'm:null' => true, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:m' => 'http://docs.oasis-open.org/odata/ns/metadata') : xml.tag!(key.to_sym, value, 'edm:Type' => type, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:edm' => 'http://docs.oasis-open.org/odata/ns/edm')", :locals => { :key => @results.keys.first.name, :type => @results.keys.first.return_type, :value => @results.values.first }, :type => :builder }
         format.json do
           json = {
             "@odata.context" => "#{o_data_engine.metadata_url}##{path}",
@@ -106,7 +106,7 @@ class ODataController < ApplicationController
       end
 
       respond_to do |format|
-        format.xml # resource.xml.builder
+        format.atom # resource.atom.builder
         format.json # resource.json.erb
       end
     when OData::Core::Segments::CollectionSegment.segment_name
@@ -124,7 +124,7 @@ class ODataController < ApplicationController
       end
 
       respond_to do |format|
-        format.xml # resource.xml.builder
+        format.atom # resource.atom.builder
         format.json # resource.json.erb
       end
     else
