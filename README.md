@@ -94,4 +94,5 @@ uses this gem.
 ## TODOS
 
 * Update the core for OData v4
+* Add support for `$search` option
 * Update and add more tests
