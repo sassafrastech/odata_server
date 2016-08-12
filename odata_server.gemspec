@@ -6,8 +6,8 @@ require "o_data/version"
 Gem::Specification.new do |s|
   s.name = "odata_server"
   s.version = OData::VERSION
-  s.authors = ["Mark Borkum", "Brad Langhorst", "Nigel Sheridan-Smith", "Lawrence McAlpin", "Jason Hamilton", "Sebastian Kliem"]
-  s.date = "2016-06-02"
+  s.authors = ["Mark Borkum", "Brad Langhorst", "Nigel Sheridan-Smith", "Lawrence McAlpin", "Jason Hamilton", "Sebastian Kliem", "Numa Claudel"]
+  s.date = "2016-08-12"
   s.email = "lmcalpin@gmail.com"
   s.homepage = ""
   s.summary = "A simple gem that exposes ActiveRecord models as OData collections."
