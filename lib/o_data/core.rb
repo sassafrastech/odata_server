@@ -18,7 +18,7 @@ require "o_data/core/options/enumerated_option"
 
 require "o_data/core/options/filter_option"
 require "o_data/core/options/format_option"
-require "o_data/core/options/inlinecount_option"
+require "o_data/core/options/count_option"
 require "o_data/core/options/top_option"
 require "o_data/core/options/skip_option"
 require "o_data/core/options/orderby_option"

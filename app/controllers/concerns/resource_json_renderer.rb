@@ -8,24 +8,16 @@ module ResourceJsonRenderer
   def o_data_json_feed(query, results, options = {})
     entity_type = options[:entity_type] || query.segments.first.entity_type
 
-    results_json = {
-      "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}",
-      value: results.collect { |result| o_data_json_entry(query, result, options) }
+    json = {
+      "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}"
     }
 
-    # TODO: need update for OData v4
-    if inlinecount_option = query.options.find { |o| o.option_name == OData::Core::Options::InlinecountOption.option_name }
-      if inlinecount_option.value == 'allpages'
-        _json = {
-          "results" => results_json,
-          "__count" => results.length.to_s
-        }
-
-        return _json
-      end
+    if count_option = query.options.find { |o| o.option_name == OData::Core::Options::CountOption.option_name }
+      json['@odata.count'] = results.length if count_option.value == 'true'
     end
 
-    results_json
+    json[:value] = results.collect { |result| o_data_json_entry(query, result, options) }
+    json
   end
 
   def o_data_json_entry(query, result, options = {})

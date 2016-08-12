@@ -1,15 +1,15 @@
 module OData
   module Core
     module Options
-      class InlinecountOption < EnumeratedOption
+      class CountOption < EnumeratedOption
         def self.option_name
-          '$inlinecount'
+          '$count'
         end
-        
+
         def self.valid_values
-          %w{none allpages}
+          %w{true false}
         end
-        
+
         def self.applies_to?(query)
           return false if query.segments.empty?
           query.segments.last.is_a?(OData::Core::Segments::CollectionSegment) || query.segments.last.is_a?(OData::Core::Segments::NavigationPropertySegment)

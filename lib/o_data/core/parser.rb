@@ -2,7 +2,7 @@ module OData
   module Core
     class Parser
       cattr_reader :reserved_option_names
-      @@reserved_option_names = %w{orderby expand select top skip filter format inlinecount}.freeze
+      @@reserved_option_names = %w{orderby expand select top skip filter format count}.freeze
       
       attr_reader :data_services
       

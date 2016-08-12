@@ -32,15 +32,12 @@ module ResourceXmlRenderer
       xml.tag!(:updated, Time.now.utc.iso8601)
       xml.tag!(:link, rel: 'self', title: results_title, href: results_href)
 
-      results.each do |result|
-        o_data_atom_entry(xml, query, result, options.merge(hide_xmlns: true, href: results_href))
+      if count_option = query.options.find { |o| o.option_name == OData::Core::Options::CountOption.option_name }
+        xml.m(:count, results.length) if count_option.value == 'true'
       end
 
-      # TODO: need update for OData v4
-      if inlinecount_option = query.options.find { |o| o.option_name == OData::Core::Options::InlinecountOption.option_name }
-        if inlinecount_option.value == 'allpages'
-          xml.m(:count, results.length)
-        end
+      results.each do |result|
+        o_data_atom_entry(xml, query, result, options.merge(hide_xmlns: true, href: results_href))
       end
     end
   end
