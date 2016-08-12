@@ -3,7 +3,7 @@ require 'rubygems'
 ENV["RAILS_ENV"] ||= "test"
 require 'rails'
 require 'rails/test_help'
-require 'test/unit'
+require 'minitest/autorun'
 require 'byebug'
 
 def MiniTest.filter_backtrace(bt)

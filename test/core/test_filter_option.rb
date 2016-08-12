@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestFilterOption < Test::Unit::TestCase
+class TestFilterOption < Minitest::Test
   def test_tokenize_handles_integer_literals
     tokens = OData::Core::Options::FilterOption.tokenize_filter_query("Prop eq 55")
     assert_equal(3, tokens.length)
@@ -73,8 +73,8 @@ class TestFilterOption < Test::Unit::TestCase
     # head should be :or
     filter_option = OData::Core::Options::FilterOption.new(query, filter)
     expr = filter_option.find_filter(:baz)
-    assert_not_nil(expr)
-    assert_equal('3', expr[0].value)
+    refute_nil(expr)
+    assert_equal(3, expr[0].value)
     assert_equal(:baz, expr[0].property)
     assert_equal(:eq, expr[0].operator)
   end
@@ -91,12 +91,12 @@ class TestFilterOption < Test::Unit::TestCase
     # head should be :or
     filter_option = OData::Core::Options::FilterOption.new(query, filter)
     expr = filter_option.find_filter(:baz)
-    assert_not_nil(expr)
+    refute_nil(expr)
     assert_equal(2, expr.size)
-    assert_equal('3', expr[0].value)
+    assert_equal(3, expr[0].value)
     assert_equal(:baz, expr[0].property)
     assert_equal(:lt, expr[0].operator)
-    assert_equal('4', expr[1].value)
+    assert_equal(4, expr[1].value)
     assert_equal(:baz, expr[1].property)
     assert_equal(:gt, expr[1].operator)
   end
@@ -109,7 +109,7 @@ class TestFilterOption < Test::Unit::TestCase
     entity_type.Property("baz", 'Edm.Int32', false)
     entity_type.key_property = bar 
     query = OData::Core::Parser.new(ds).parse!("Foos")
-    filter = "bar add 5 eq 8 or baz eq 3"
+    filter = "Bar add 5 eq 8 or Baz eq 3"
     # head should be :or
     filter_option = OData::Core::Options::FilterOption.new(query, filter)
     assert_equal(:eq, filter_option.filter.value)

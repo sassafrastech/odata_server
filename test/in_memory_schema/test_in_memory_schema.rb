@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestInMemorySchema < Test::Unit::TestCase
+class TestInMemorySchema < Minitest::Test
   def test_register
     schema = OData::InMemorySchema::Base.new
     schema.register(Foo)
@@ -33,11 +33,11 @@ class TestInMemorySchema < Test::Unit::TestCase
     schema = OData::InMemorySchema::Base.new(Test::Foo)
     schema.register(Test::Foo, :baz)
     et = schema.find_entity_type(Test::Foo)
-    assert_equal("baz", et.key_property.name)
+    assert_equal("Baz", et.key_property.name)
     schema.entity_types.clear
     schema.register(Test::Foo, :bar)
     et = schema.find_entity_type(Test::Foo)
-    assert_equal("bar", et.key_property.name)
+    assert_equal("Bar", et.key_property.name)
   end
   
   # set up a Foo object with the "bar" property as the key

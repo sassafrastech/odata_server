@@ -12,7 +12,7 @@ class Baz
   # empty on purpose
 end
 
-class TestDataServices < Test::Unit::TestCase
+class TestDataServices < Minitest::Test
   def test_initialize
     inmemory1 = OData::InMemorySchema::Base.new
     inmemory1.register(Foo)

@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestQuery < Test::Unit::TestCase
+class TestQuery < Minitest::Test
   def setup
     data_services = OData::Edm::DataServices.new
     @parser = OData::Core::Parser.new(data_services)
@@ -25,7 +25,7 @@ class TestQuery < Test::Unit::TestCase
 
   def test_query_find
     assert_equal(2, @schema.find_entity_type(Test::Foo).entities.length)
-    query = @parser.parse! "Foo?$filter=bar eq 'b'"
+    query = @parser.parse! "Foo?$filter=Bar eq 'b'"
     res = query.execute!
     assert_equal(1, res.length)
   end

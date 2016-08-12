@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestParser < Test::Unit::TestCase
+class TestParser < Minitest::Test
   def test_parser
     data_services = OData::Edm::DataServices.new
     parser = OData::Core::Parser.new(data_services)
