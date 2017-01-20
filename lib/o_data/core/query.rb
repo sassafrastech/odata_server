@@ -4,7 +4,7 @@ module OData
       attr_reader :data_services
       attr_reader :segments, :options
       
-      def initialize(data_services, segments = {}, options = {})
+      def initialize(data_services, segments = [], options = {})
         @data_services = data_services
         
         @segments = segments
