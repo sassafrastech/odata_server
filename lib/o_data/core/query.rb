@@ -4,7 +4,7 @@ module OData
       attr_reader :data_services
       attr_reader :segments, :options
       
-      def initialize(data_services, segments = [], options = [])
+      def initialize(data_services, segments = {}, options = {})
         @data_services = data_services
         
         @segments = segments
@@ -38,10 +38,12 @@ module OData
             args.shift
           end
         end
-        
+
         option = option_class.new(self, *args)
-        
-        @options << option
+
+        key = option.option_name.underscore.to_sym
+        @options[key] = option
+
         option
       end
       
@@ -90,7 +92,7 @@ module OData
       private
       
       def with_filter_options(results)
-        filter_option = @options.find { |o| o.option_name == Options::FilterOption.option_name }
+        filter_option = @options[:filter]
         if filter_option && (entity_type = filter_option.entity_type)
           results = entity_type.filter(results, filter_option)
         else
@@ -99,7 +101,7 @@ module OData
       end
       
       def with_orderby_option(results)
-        orderby_option = @options.find { |o| o.option_name == Options::OrderbyOption.option_name }
+        orderby_option = @options[:orderby]
         
         orderby = orderby_option.blank? ? nil : orderby_option.pairs
         
@@ -111,8 +113,8 @@ module OData
       end
       
       def with_skip_and_top_options(results)
-        skip_option = @options.find { |o| o.option_name == Options::SkipOption.option_name }
-        top_option = @options.find { |o| o.option_name == Options::TopOption.option_name }
+        skip_option = @options[:skip]
+        top_option = @options[:top]
         
         skip = skip_option.blank? ? nil : skip_option.value.to_i
         top = top_option.blank? ? nil : top_option.value.to_i

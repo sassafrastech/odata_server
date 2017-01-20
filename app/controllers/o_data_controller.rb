@@ -101,7 +101,7 @@ class ODataController < ApplicationController
       @collection_name = @entity_type_name.pluralize
 
       @expand_navigation_property_paths = {}
-      if expand_option = @query.options.find { |o| o.option_name == OData::Core::Options::ExpandOption.option_name }
+      if expand_option = @query.options[:expand]
         @expand_navigation_property_paths = expand_option.navigation_property_paths
       end
 
@@ -119,7 +119,7 @@ class ODataController < ApplicationController
       @entity_type = @last_segment.entity_type
 
       @expand_navigation_property_paths = {}
-      if expand_option = @query.options.find { |o| o.option_name == OData::Core::Options::ExpandOption.option_name }
+      if expand_option = @query.options[:expand]
         @expand_navigation_property_paths = expand_option.navigation_property_paths
       end
 
@@ -154,7 +154,7 @@ class ODataController < ApplicationController
   end
 
   def set_request_format!
-    if format_option = @query.options.find { |o| o.option_name == OData::Core::Options::FormatOption.option_name }
+    if format_option = @query.options[:format]
       if format_value = format_option.value
         request.format = format_value.to_sym
       end

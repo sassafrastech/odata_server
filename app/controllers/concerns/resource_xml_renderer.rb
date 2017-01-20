@@ -32,7 +32,7 @@ module ResourceXmlRenderer
       xml.tag!(:updated, Time.now.utc.iso8601)
       xml.tag!(:link, rel: 'self', title: results_title, href: results_href)
 
-      if count_option = query.options.find { |o| o.option_name == OData::Core::Options::CountOption.option_name }
+      if count_option = query.options[:count]
         xml.m(:count, results.length) if count_option.value == 'true'
       end
 

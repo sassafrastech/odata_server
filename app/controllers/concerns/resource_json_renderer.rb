@@ -12,7 +12,7 @@ module ResourceJsonRenderer
       "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}"
     }
 
-    if count_option = query.options.find { |o| o.option_name == OData::Core::Options::CountOption.option_name }
+    if count_option = query.options[:count]
       json['@odata.count'] = results.length if count_option.value == 'true'
     end
 
