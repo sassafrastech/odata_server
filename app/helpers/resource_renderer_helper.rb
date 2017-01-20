@@ -1,5 +1,4 @@
-module ResourceRenderer
-  extend ActiveSupport::Concern
+module ResourceRendererHelper
 
   def get_selected_properties_for(query, entity_type)
     # $select option not supplied

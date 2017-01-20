@@ -2,10 +2,6 @@ class ODataController < ApplicationController
   include ActionController::MimeResponds
   include ActionController::Helpers
 
-  include ResourceRenderer
-  include ResourceXmlRenderer
-  include ResourceJsonRenderer
-
   cattr_reader :data_services
   @@data_services = OData::Edm::DataServices.new.freeze
 

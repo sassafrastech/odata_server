@@ -1,9 +1,4 @@
-module ResourceJsonRenderer
-  extend ActiveSupport::Concern
-
-  included do
-    helper_method :o_data_json_feed, :o_data_json_entry
-  end
+module ResourceJsonRendererHelper
 
   def o_data_json_feed(query, results, entity_type, options = {})
     entity_type ||= query.segments.first.entity_type

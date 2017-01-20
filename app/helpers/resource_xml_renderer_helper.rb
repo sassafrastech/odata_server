@@ -1,5 +1,4 @@
-module ResourceXmlRenderer
-  extend ActiveSupport::Concern
+module ResourceXmlRendererHelper
 
   ODataAtomXmlns = {
     'xmlns'   => 'http://www.w3.org/2005/Atom',
@@ -8,10 +7,6 @@ module ResourceXmlRenderer
     'xmlns:georss' => 'http://www.georss.org/georss',
     'xmlns:gml' => 'http://www.opengis.net/gml'
   }.freeze
-
-  included do
-    helper_method :o_data_atom_feed, :o_data_atom_entry
-  end
 
   def o_data_atom_feed(xml, query, results, entity_type, options = {})
     entity_type ||= query.segments.first.entity_type
