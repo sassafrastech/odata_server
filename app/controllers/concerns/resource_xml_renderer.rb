@@ -13,8 +13,8 @@ module ResourceXmlRenderer
     helper_method :o_data_atom_feed, :o_data_atom_entry
   end
 
-  def o_data_atom_feed(xml, query, results, options = {})
-    entity_type = options[:entity_type] || query.segments.first.entity_type
+  def o_data_atom_feed(xml, query, results, entity_type, options = {})
+    entity_type ||= query.segments.first.entity_type
 
     results_href, results_url =
       if base_href = options.delete(:href)
@@ -32,18 +32,18 @@ module ResourceXmlRenderer
       xml.tag!(:updated, Time.now.utc.iso8601)
       xml.tag!(:link, rel: 'self', title: results_title, href: results_href)
 
-      if count_option = query.options[:count]
-        xml.m(:count, results.length) if count_option.value == 'true'
+      if count_option = query.options[:count] && count_option.value == 'true'
+        xml.m(:count, results.length)
       end
 
       results.each do |result|
-        o_data_atom_entry(xml, query, result, options.merge(hide_xmlns: true, href: results_href))
+        o_data_atom_entry(xml, query, result, entity_type, options.merge(hide_xmlns: true, href: results_href))
       end
     end
   end
 
-  def o_data_atom_entry(xml, query, result, options = {})
-    entity_type = options[:entity_type] || query.data_services.find_entity_type(result.class)
+  def o_data_atom_entry(xml, query, result, entity_type, options = {})
+    entity_type ||= query.data_services.find_entity_type(result.class)
     raise OData::Core::Errors::EntityTypeNotFound.new(query, result.class.name) if entity_type.blank?
 
     result_href = entity_type.href_for(result)
@@ -84,15 +84,19 @@ module ResourceXmlRenderer
         if navigation_property.partner
           navigation_property_href = "#{result_href}/#{navigation_property.partner}"
 
-          related_attrs = { rel: "http://docs.oasis-open.org/odata/ns/related/#{navigation_property.partner}", type: "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}", title: navigation_property.partner, href: navigation_property_href }
+          related_attrs = { rel: "http://docs.oasis-open.org/odata/ns/related/#{navigation_property.partner}",
+                            type: "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}",
+                            title: navigation_property.partner,
+                            href: navigation_property_href }
 
-          if (options[:expand] || {}).keys.include?(navigation_property)
+          if options[:expand] && options[:expand].keys.include?(navigation_property)
             xml.tag!(:link, related_attrs) do
               xml.m(:inline) do
+                expand = options[:expand][navigation_property]
                 if navigation_property.association.multiple?
-                  o_data_atom_feed(xml, query, navigation_property.find_all(result), options.merge(entity_type: navigation_property.entity_type, expand: options[:expand][navigation_property]))
+                  o_data_atom_feed(xml, query, navigation_property.find_all(result), navigation_property.entity_type, options.merge(expand: expand))
                 else
-                  o_data_atom_entry(xml, query, navigation_property.find_one(result), options.merge(entity_type: navigation_property.entity_type, expand: options[:expand][navigation_property]))
+                  o_data_atom_entry(xml, query, navigation_property.find_one(result), navigation_property.entity_type, options.merge(expand: expand))
                 end
               end
             end

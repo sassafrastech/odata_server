@@ -10,6 +10,10 @@ module OData
       attr_reader :key_property, :schema
       attr_accessor :properties, :navigation_properties
 
+      def self.name_for(object)
+        object.class.to_s.gsub('::', '')
+      end
+
       def initialize(schema, name)
         @schema = schema
         @name = name

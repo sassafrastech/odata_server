@@ -1,7 +1,7 @@
 <%=
   if @countable
-    o_data_json_feed(@query, @results, expand: @expand_navigation_property_paths).to_json
+    o_data_json_feed(@query, @results, @entity_type, expand: @expand_navigation_property_paths).to_json
   else
-    o_data_json_entry(@query, @results.first, expand: @expand_navigation_property_paths, context: true).to_json
+    o_data_json_entry(@query, @results.first, @entity_type, expand: @expand_navigation_property_paths, context: true).to_json
   end.html_safe
 %>
