@@ -9,7 +9,7 @@ module OData
         end
 
         def sort(many, property_order_pairs = [])
-          [many].compact.flatten.sort { |a, b| compare(a, b, property_order_pairs) }
+          Array(many).compact.sort { |a, b| compare(a, b, property_order_pairs) }
         end
 
         protected

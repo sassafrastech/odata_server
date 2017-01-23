@@ -54,13 +54,13 @@ module OData
         end
 
         def execute!(acc, options = nil)
-          [acc].flatten.compact.collect { |one|
+          Array(acc).compact.collect do |one|
             if key?
               @navigation_property.find_one(one, key_property_value)
             else
               @navigation_property.find_all(one, @key_values)
             end
-          }.first
+          end.first
         end
 
         def multiple?

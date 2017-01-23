@@ -34,10 +34,7 @@ module OData
         end
 
         def execute!(acc, options = nil)
-          # [acc].flatten.compact.collect { |one|
-          #   [one, @property.value_for(one)]
-          # }
-          { @property => @property.value_for([acc].flatten.compact.first) }
+          { @property => @property.value_for(Array(acc).compact.first) }
         end
 
         def valid?(results)
