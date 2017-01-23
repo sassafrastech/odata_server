@@ -3,41 +3,31 @@ module OData
     class Parser
       cattr_reader :reserved_option_names
       @@reserved_option_names = %w{orderby expand select top skip filter format count}.freeze
-      
-      attr_reader :data_services
-      
+
       def initialize(data_services)
         @data_services = data_services
       end
-      
-      def parse!(uri)
-        return nil if uri.blank?
-        
-        query = OData::Core::Query.new(@data_services)
-        
-        resource_path, query_string = uri.split('?', 2)
-        
-        unless resource_path.blank?
-          resource_path_components = resource_path.split('/')
-          resource_path_components.each_index do |i|
-            resource_path_component = resource_path_components[i]
-            segment = _parse_segment!(query, resource_path_component)
-          end
+
+      def parse!(params)
+        query = OData::Core::Query.new(data_services)
+        resource_path_components = params[:path].split('/')
+        query_string_components = params.except(:path)
+
+        resource_path_components.each do |resource_path_component|
+          _parse_segment!(query, resource_path_component)
         end
-        
-        unless query_string.blank?
-          query_string_components = query_string.split('&')
-          query_string_components.each_index do |i|
-            query_string_component = query_string_components[i]
-            option = _parse_option!(query, query_string_component)
-          end
+
+        query_string_components.each do |key, value|
+          _parse_option!(query, key, value)
         end
-        
+
         query
       end
-      
-      protected
-      
+
+      private
+
+      attr_reader :data_services
+
       def _parse_segment!(query, resource_path_component)
         Segment.descendants.each do |segment_class|
           if segment_class.can_follow?(query.segments.last)
@@ -49,10 +39,8 @@ module OData
         
         raise Errors::ParseQuerySegmentException.new(query, resource_path_component)
       end
-      
-      def _parse_option!(query, query_string_component)
-        key, value = query_string_component.split('=', 2)
-        
+
+      def _parse_option!(query, key, value)
         if md = key.match(/^\$(.*?)$/)
           raise Errors::InvalidReservedOptionName.new(query, key, value) unless @@reserved_option_names.include?(md[1])
         end

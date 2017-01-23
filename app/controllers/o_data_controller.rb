@@ -13,9 +13,8 @@ class ODataController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: :options
 
-  before_action :extract_resource_path_and_query_string, :only => [:resource]
-  before_action :parse_resource_path_and_query_string!,  :only => [:resource]
-  before_action :set_request_format!,                    :only => [:resource]
+  before_action :parse_url, only: :resource
+  before_action :set_request_format!, only: :resource
   after_action :set_header
 
   %w{service metadata resource}.each do |method_name|
@@ -133,27 +132,14 @@ class ODataController < ApplicationController
 
   private
 
-  def extract_resource_path_and_query_string
-    @resource_path = params[:path]
-
-    @query_string = params.inject({}) { |acc, pair|
-      key, value = pair
-      acc[key.to_sym] = value unless [@resource_path, :controller, :action].include?(key.to_sym)
-      acc
-    }.collect { |key, value|
-      key.to_s + '=' + value.to_s
-    }.join('&')
-  end
-
-  def parse_resource_path_and_query_string!
-    @query = @@parser.parse!([@resource_path, @query_string].compact.join('?'))
+  def parse_url
+    @query = @@parser.parse!(params.except(:controller, :action))
   end
 
   def set_request_format!
-    if format_option = @query.options[:format]
-      if format_value = format_option.value
-        request.format = format_value.to_sym
-      end
+    format_option = @query.options[:format]
+    if format_option && format_option.value
+      request.format = format_option.value.to_sym
     end
   end
 
