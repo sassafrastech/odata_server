@@ -66,10 +66,6 @@ module OData
         @key_property.value_for(one)
       end
 
-      def inspect
-        "#<< #{qualified_name.to_s}(#{[@properties, @navigation_properties].flatten.collect { |p| "#{p.name.to_s}: #{p.return_type.to_s}" }.join(', ')}) >>"
-      end
-
       def filter(results, filter)
         results.collect do |entity|
           filter.apply(self, entity)

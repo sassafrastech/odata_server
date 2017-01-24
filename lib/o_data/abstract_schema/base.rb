@@ -35,13 +35,10 @@ module OData
         namespace.to_s + '.' + str.to_s
       end
 
-      def inspect
-        "#<< #{namespace.to_s}(#{@entity_types.collect(&:name).join(', ')}) >>"
+      def to_json
+        { "EntitySets" => @entity_types.collect(&:plural_name).sort }.to_json
       end
 
-      def to_json
-        { "d" => { "EntitySets" => @entity_types.collect(&:plural_name).sort } }.to_json
-      end
     end
   end
 end

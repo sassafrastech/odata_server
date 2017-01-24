@@ -41,9 +41,6 @@ module OData
         end
       end
 
-      def inspect
-        "#<< #{qualified_name}(#{name}: #{return_type}) >>"
-      end
     end
   end
 end

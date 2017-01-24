@@ -28,10 +28,6 @@ module OData
           name.to_s.pluralize
         end
 
-        def inspect
-          "#<< #{schema.namespace}(<< #{name.inspect}: #{self.class.name.to_s} >>) >>"
-        end
-
       end
     end
   end

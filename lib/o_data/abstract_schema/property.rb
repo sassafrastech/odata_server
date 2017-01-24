@@ -38,9 +38,6 @@ module OData
         @entity_type.qualified_name.to_s + '#' + self.name
       end
 
-      def inspect
-        "#<< {qualified_name.to_s}(return_type: #{@return_type.to_s}, nullable: #{nullable?}) >>"
-      end
     end
   end
 end

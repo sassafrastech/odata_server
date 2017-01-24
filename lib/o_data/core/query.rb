@@ -10,11 +10,7 @@ module OData
         @segments = segments
         @options = options
       end
-      
-      def inspect
-        "#<< (#{self.to_uri.inspect}) >>"
-      end
-      
+
       def Segment(*args)
         segment_class = begin
           if args.first.is_a?(Symbol) || args.first.is_a?(String)

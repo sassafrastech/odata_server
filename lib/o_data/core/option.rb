@@ -16,12 +16,8 @@ module OData
         @key = key
         @value = value
       end
-      
-      def inspect
-        "#<< (#{@key.to_s}=#{@value.to_s}) >>"
-      end
     end
-    
+
     class Option < BasicOption
       def self.option_name
         name.to_s.demodulize.sub(/Option$/, '')

@@ -125,7 +125,7 @@ module OData
       
       class InvalidOptionValue < CoreOptionException
         def to_s
-          "Invalid value for '#{self.option.option_name.to_s}' query option#{" - the only acceptable values are #{self.option.valid_values.collect { |v| v.to_s.inspect }.to_sentence}" if self.option.respond_to?(:valid_values)}."
+          "Invalid value for '#{self.option.option_name.to_s}' query option#{" - the only acceptable values are #{self.option.valid_values.collect { |v| v.to_s }.to_sentence}" if self.option.respond_to?(:valid_values)}."
         end
       end
     end

@@ -57,10 +57,7 @@ module OData
         return nil if @key_property.blank?
         @key_property.value_for(one)
       end
-      
-      def inspect
-        "#<< #{qualified_name.to_s}(#{[@properties, @navigation_properties].flatten.collect { |p| "#{p.name.to_s}: #{p.return_type.to_s}" }.join(', ')}) >>"
-      end
+
     end
   end
 end

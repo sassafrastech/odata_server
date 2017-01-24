@@ -30,11 +30,7 @@ module OData
       def execute!(acc, options = nil)
         acc
       end
-      
-      def inspect
-        "#<< (#{self.class.segment_name}: #{self.value.inspect}) >>"
-      end
-      
+
       def valid?(results)
         !results.blank?
       end
