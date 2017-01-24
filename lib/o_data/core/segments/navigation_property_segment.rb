@@ -11,7 +11,7 @@ module OData
           schema_object_name, key_values, keys = extract_schema_object_name_and_key_values_and_keys(str)
           return nil if schema_object_name.blank?
 
-          navigation_property = entity_type.navigation_properties.find { |np| np.name == schema_object_name }
+          navigation_property = entity_type.find_navigation_property(schema_object_name)
           return nil if navigation_property.blank?
 
           if navigation_property.association.polymorphic?

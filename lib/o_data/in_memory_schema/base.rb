@@ -24,16 +24,12 @@ module OData
 
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
-        @entity_types << entity_type
+        @entity_types[entity_type.name] = entity_type
         entity_type
       end
 
       def find_entity_type(name)
-        if name.respond_to?(:name)
-          self.entity_types.find { |et| et.name == name.name.demodulize }
-        else
-          super
-        end
+        name.respond_to?(:name) ? super(name.name.demodulize) : super
       end
     end
   end

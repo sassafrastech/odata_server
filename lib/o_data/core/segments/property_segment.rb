@@ -9,7 +9,7 @@ module OData
           return nil unless query.segments.last.respond_to?(:entity_type)
           entity_type = query.segments.last.entity_type
           return nil if entity_type.nil?
-          property = entity_type.properties.find { |p| p.name == str }
+          property = entity_type.find_property(str)
           return nil if property.blank?
 
           query.Segment(self, entity_type, property)

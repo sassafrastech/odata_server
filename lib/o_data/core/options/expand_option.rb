@@ -61,7 +61,7 @@ module OData
             acc
           elsif entity_type.blank?
             raise OData::Core::Errors::NavigationPropertyNotFound.new(nil, head)
-          elsif navigation_property = entity_type.navigation_properties.find { |np| np.name == head }
+          elsif navigation_property = entity_type.find_navigation_property(head)
             acc[navigation_property] ||= {}
 
             if navigation_property.association.polymorphic?

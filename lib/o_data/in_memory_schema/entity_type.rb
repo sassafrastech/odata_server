@@ -30,13 +30,13 @@ module OData
 
       def Property(*args)
         property = Property.new(self, *args)
-        self.properties << property
+        @properties[property.name] = property
         property
       end
 
       def NavigationProperty(*args)
         navigation_property = NavigationProperty.new(self, *args)
-        self.navigation_properties << navigation_property
+        @navigation_properties[navigation_property.name] = navigation_property
         navigation_property
       end
 

@@ -17,31 +17,34 @@ module OData
       def initialize(schema, name)
         @schema = schema
         @name = name
-        @properties = []
+        @properties = {}
         @key_property = nil
-        @navigation_properties = []
+        @navigation_properties = {}
       end
 
       def key_property=(property)
-        return nil unless property.is_a?(Property)
-        return nil unless @properties.include?(property)
+        return nil unless property.is_a?(Property) && find_property(property.name)
         @key_property = property
       end
 
       def Property(*args)
         property = Property.new(self, *args)
-        @properties << property
+        @properties[property.name] = property
         property
       end
 
       def NavigationProperty(*args)
         navigation_property = NavigationProperty.new(self, *args)
-        @navigation_properties << navigation_property
+        @navigation_properties[navigation_property.name] = navigation_property
         navigation_property
       end
 
-      def find_property(property_name)
-        @properties.find { |p| p.name == property_name }
+      def find_property(name)
+        properties[name.to_s]
+      end
+
+      def find_navigation_property(name)
+        navigation_properties[name.to_s]
       end
 
       def find_all(key_values = {}, options = nil)

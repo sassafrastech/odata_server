@@ -37,7 +37,7 @@ module OData
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
 
           if @active_record.column_names.include?(atom_element_name.to_s)
-            property = self.properties.find { |p| p.name == atom_element_name.to_s }
+            property = find_property(atom_element_name)
             next if property.blank?
 
             self.send(:"#{o_data_entity_type_property_name}=", property)
@@ -53,13 +53,13 @@ module OData
 
       def Property(*args)
         property = Property.new(self, *args)
-        self.properties << property
+        @properties[property.name] = property
         property
       end
 
       def NavigationProperty(*args)
         navigation_property = NavigationProperty.new(self, *args)
-        self.navigation_properties << navigation_property
+        @navigation_properties[navigation_property.name] = navigation_property
         navigation_property
       end
 
@@ -95,7 +95,7 @@ module OData
             if property_or_str.is_a?(Property)
               property_or_str
             else
-              property = entity_type.properties.find { |p| p.name == property_or_str.to_s }
+              property = entity_type.find_property(property_or_str)
               raise OData::Core::Errors::PropertyNotFound.new(nil, property_or_str) if property.blank?
             end
           end

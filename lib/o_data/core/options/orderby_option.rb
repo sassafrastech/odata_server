@@ -38,7 +38,7 @@ module OData
                 property_name = md[1]
                 order = md[2].blank? ? :asc : md[2].to_sym
 
-                property = entity_type.properties.find { |p| p.name == property_name }
+                property = entity_type.find_property(property_name)
                 raise OData::Core::Errors::PropertyNotFound.new(query, property_name) if property.blank?
 
                 [property, order]
@@ -66,7 +66,7 @@ module OData
           @pairs.is_a?(Array) && @pairs.all? { |pair|
             property, value = pair
 
-            property.is_a?(OData::AbstractSchema::Property) && !!entity_type.properties.find { |p| p.name == property.name }
+            property.is_a?(OData::AbstractSchema::Property) && !!entity_type.find_property(property.name)
           }
         end
 

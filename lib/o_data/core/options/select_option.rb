@@ -35,7 +35,7 @@ module OData
               if md = path.match(/^([A-Za-z_]+)$/)
                 property_name = md[1]
 
-                property = entity_type.properties.find { |p| p.name == property_name }
+                property = entity_type.find_property(property_name)
                 raise OData::Core::Errors::PropertyNotFound.new(query, property_name) if property.blank? and entity_type.navigation_properties.find{ |np| np.name == property_name}.blank?
 
                 property

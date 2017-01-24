@@ -10,12 +10,12 @@ module OData
 
       def initialize(namespace = "OData")
         @namespace = namespace
-        @entity_types = []
+        @entity_types = {}
       end
 
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
-        @entity_types << entity_type
+        @entity_types[entity_type.name] = entity_type
         entity_type
       end
 
@@ -24,11 +24,7 @@ module OData
       end
 
       def find_entity_type(name)
-        if name.nil?
-          nil
-        else
-          self.entity_types.find { |et| et.name == name.to_s }
-        end
+        entity_types[name.to_s]
       end
 
       def qualify(str)

@@ -36,7 +36,7 @@ module OData
           sanitized_key_values = key_values.inject({}) { |acc, key_value_pair|
             key, value = key_value_pair
 
-            property = entity_type.properties.find { |p| p.name == key.to_s }
+            property = entity_type.find_property(key)
             raise OData::Core::Errors::PropertyNotFound.new(query, key) if property.blank?
             
             raise OData::Core::Errors::CoreKeyValueException.new(query, key, value) unless acc[key.to_sym].blank?

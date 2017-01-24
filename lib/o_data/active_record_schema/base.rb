@@ -26,12 +26,12 @@ module OData
       end
 
       def find_entity_type(klass)
-        self.entity_types.find { |et| et.name == EntityType.name_for(klass) }
+        entity_types[EntityType.name_for(klass)]
       end
 
       def EntityType(*args)
         entity_type = EntityType.new(self, *args)
-        self.entity_types << entity_type
+        @entity_types[entity_type.name] = entity_type
         entity_type
       end
     end

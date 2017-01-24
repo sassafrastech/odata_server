@@ -60,13 +60,13 @@ module ResourceXmlRendererHelper
       unless (properties = get_selected_properties_for(query, entity_type)).empty?
         xml.tag!(:content, type: 'application/xml') do
           xml.m(:properties) do
-            properties.each do |property|
+            properties.each do |key, property|
               property_attrs = { "m:type" => property.return_type }
 
               unless (value = property.value_for(result)).blank?
-                xml.d(property.name.to_sym, value, property_attrs)
+                xml.d(key.to_sym, value, property_attrs)
               else
-                xml.d(property.name.to_sym, property_attrs.merge('m:null' => true))
+                xml.d(key.to_sym, property_attrs.merge('m:null' => true))
               end
             end
           end
@@ -75,7 +75,7 @@ module ResourceXmlRendererHelper
 
       xml.tag!(:link, rel: 'self', title: result_title, href: result_href) unless result_title.blank? || result_href.blank?
 
-      entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
+      Hash[entity_type.navigation_properties.sort].values.each do |navigation_property|
         if navigation_property.partner
           navigation_property_href = "#{result_href}/#{navigation_property.partner}"
 

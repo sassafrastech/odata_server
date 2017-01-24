@@ -17,15 +17,15 @@ module OData
         end
 
         def name
-          @name.camelize
+          @name.to_s.camelize
         end
 
         def singular_name
-          name.to_s.singularize
+          name.singularize
         end
 
         def plural_name
-          name.to_s.pluralize
+          name.pluralize
         end
 
       end

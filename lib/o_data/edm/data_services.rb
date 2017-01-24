@@ -10,7 +10,7 @@ module OData
         @entity_types = []
         @schemas = schemas.dup || []
         schemas.each do |schema|
-          @entity_types.concat(schema.entity_types)
+          @entity_types.concat(schema.entity_types.values)
         end
       end
 

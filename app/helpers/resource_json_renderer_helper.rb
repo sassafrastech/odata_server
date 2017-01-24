@@ -24,11 +24,11 @@ module ResourceJsonRendererHelper
     _json = {}
     _json["@odata.context"] = "#{o_data_engine.metadata_url}##{entity_type.plural_name}/$entity" if options[:context]
 
-    get_selected_properties_for(query, entity_type).each do |property|
-      _json[property.name.to_s] = property.value_for(result)
+    get_selected_properties_for(query, entity_type).each do |key, property|
+      _json[key] = property.value_for(result)
     end
 
-    entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
+    Hash[entity_type.navigation_properties.sort].values.each do |navigation_property|
       if navigation_property.partner
         navigation_property_uri = "#{resource_uri}/#{navigation_property.partner}"
 
