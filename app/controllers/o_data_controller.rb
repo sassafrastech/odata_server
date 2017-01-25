@@ -86,12 +86,19 @@ class ODataController < ApplicationController
       @polymorphic = @navigation_property.association.polymorphic?
 
       if @polymorphic
-        @entity_type = nil
+        @entity_type =
+            if @countable
+              query.segments.first.entity_type
+            else
+              query.data_services.find_entity_type(result.class)
+            end
         @entity_type_name = @navigation_property.name.singularize
       else
         @entity_type = @navigation_property.entity_type
         @entity_type_name = @entity_type.name
       end
+
+      raise OData::Core::Errors::EntityTypeNotFound.new(query, result.class.name) if @entity_type.blank?
 
       @collection_name = @entity_type_name.pluralize
 

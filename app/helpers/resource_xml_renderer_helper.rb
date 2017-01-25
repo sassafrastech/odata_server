@@ -9,8 +9,6 @@ module ResourceXmlRendererHelper
   }.freeze
 
   def o_data_atom_feed(xml, query, results, entity_type, options = {})
-    entity_type ||= query.segments.first.entity_type
-
     results_href, results_url =
       if base_href = options.delete(:href)
         [base_href.to_s, o_data_engine.resource_url(base_href.to_s)]
@@ -38,9 +36,6 @@ module ResourceXmlRendererHelper
   end
 
   def o_data_atom_entry(xml, query, result, entity_type, options = {})
-    entity_type ||= query.data_services.find_entity_type(result.class)
-    raise OData::Core::Errors::EntityTypeNotFound.new(query, result.class.name) if entity_type.blank?
-
     result_href = entity_type.href_for(result)
     result_url = o_data_engine.resource_url(result_href)
 

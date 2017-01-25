@@ -1,8 +1,6 @@
 module ResourceJsonRendererHelper
 
   def o_data_json_feed(query, results, entity_type, options = {})
-    entity_type ||= query.segments.first.entity_type
-
     json = {
       "@odata.context" => "#{o_data_engine.metadata_url}##{entity_type.plural_name}"
     }
@@ -16,9 +14,6 @@ module ResourceJsonRendererHelper
   end
 
   def o_data_json_entry(query, result, entity_type, options = {})
-    entity_type ||= query.data_services.find_entity_type(result.class)
-    raise OData::Core::Errors::EntityTypeNotFound.new(query, result.class.name) if entity_type.blank?
-
     resource_uri = o_data_engine.resource_url(entity_type.href_for(result))
 
     _json = {}
