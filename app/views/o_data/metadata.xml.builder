@@ -5,7 +5,7 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
     ODataController.data_services.schemas.each do |schema|
       xml.tag!(:Schema, Namespace: schema.namespace, xmlns: "http://docs.oasis-open.org/odata/ns/edm") do
 
-        schema.entity_types.sort_by(&:qualified_name).each do |entity_type|
+        schema.entity_types.values.sort_by(&:qualified_name).each do |entity_type|
           next if entity_type.name.include?('HABTM')
           xml.tag!(:EntityType, Name: entity_type.name) do
             unless entity_type.key_property.blank?
@@ -14,13 +14,12 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
               end
             end
 
-            entity_type.properties.each do |property|
-              xml.tag!(:Property, Name: property.name, Type: property.return_type, Nullable: property.nullable?)
+            entity_type.properties.each do |key, property|
+              xml.tag!(:Property, Name: key, Type: property.return_type, Nullable: property.nullable?)
             end
 
-            entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
-              attrs = { Name: navigation_property.name,
-                        Type: navigation_property.return_type }
+            Hash[entity_type.navigation_properties.sort].each do |key, navigation_property|
+              attrs = { Name: key, Type: navigation_property.return_type }
               attrs[:Partner] = navigation_property.partner if navigation_property.partner
               xml.tag!(:NavigationProperty, attrs)
             end
@@ -28,11 +27,11 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
         end
 
         xml.tag!(:EntityContainer, Name: "#{schema.namespace}Service") do
-          schema.entity_types.sort_by(&:qualified_name).each do |entity_type|
+          schema.entity_types.values.sort_by(&:qualified_name).each do |entity_type|
             next if entity_type.plural_name.include?('HABTM')
             xml.tag!(:EntitySet, Name: entity_type.plural_name, EntityType: entity_type.qualified_name) do
 
-              entity_type.navigation_properties.sort_by(&:name).each do |navigation_property|
+              Hash[entity_type.navigation_properties.sort].each do |_, navigation_property|
                 if navigation_property.partner
                   xml.tag!(:NavigationPropertyBinding, Path: navigation_property.partner,
                                                        Target: navigation_property.plural_name)
