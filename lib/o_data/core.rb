@@ -11,7 +11,6 @@ require "o_data/core/segments/collection_segment"
 require "o_data/core/segments/navigation_property_segment"
 require "o_data/core/segments/property_segment"
 require "o_data/core/segments/value_segment"
-require "o_data/core/segments/links_segment"
 require "o_data/core/segments/count_segment"
 
 require "o_data/core/options/enumerated_option"

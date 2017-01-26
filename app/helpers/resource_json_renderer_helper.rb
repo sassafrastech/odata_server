@@ -23,21 +23,18 @@ module ResourceJsonRendererHelper
       _json[key] = property.value_for(result)
     end
 
-    Hash[entity_type.navigation_properties.sort].values.each do |navigation_property|
-      if navigation_property.partner
-        navigation_property_uri = "#{resource_uri}/#{navigation_property.partner}"
-
-        _json[navigation_property.name.to_s] = begin
-          if options[:expand] && options[:expand].keys.include?(navigation_property)
-            expand = options[:expand][navigation_property]
-            if navigation_property.association.multiple?
-              o_data_json_feed(query, navigation_property.find_all(result), navigation_property.entity_type, options.merge(expand: expand))
-            else
-              o_data_json_entry(query, navigation_property.find_one(result), navigation_property.entity_type, options.merge(expand: expand))
-            end
+    Hash[entity_type.navigation_properties.sort].values.select(&:parter).each do |navigation_property|
+      _json[navigation_property.name.to_s] = begin
+        if options[:expand] && options[:expand].keys.include?(navigation_property)
+          expand = options[:expand][navigation_property]
+          if navigation_property.association.multiple?
+            o_data_json_feed(query, navigation_property.find_all(result), navigation_property.entity_type, options.merge(expand: expand))
           else
-            { "#{navigation_property.partner}@odata.navigationLink" => navigation_property_uri }
+            o_data_json_entry(query, navigation_property.find_one(result), navigation_property.entity_type, options.merge(expand: expand))
           end
+        else
+          navigation_property_uri = "#{resource_uri}/#{navigation_property.partner}"
+          { "#{navigation_property.partner}@odata.navigationLink" => navigation_property_uri }
         end
       end
     end

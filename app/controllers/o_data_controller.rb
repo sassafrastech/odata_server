@@ -49,63 +49,49 @@ class ODataController < ApplicationController
 
   def resource
     @last_segment = @query.segments.last
-
     @results = @query.execute!
 
     case @last_segment.class.segment_name
     when OData::Core::Segments::CountSegment.segment_name
-      render :text => @results.to_i
-    when OData::Core::Segments::LinksSegment.segment_name
-      request.format = :atom unless request.format == :json
-
-      respond_to do |format|
-        format.atom  { render :inline => "xml.instruct!; @results.empty? ? xml.links('xmlns' => 'http://www.w3.org/2005/Atom') : xml.links('xmlns' => 'http://www.w3.org/2005/Atom') { @results.each { |r| xml.uri(o_data_engine.resource_url(r[1])) } }", :type => :builder }
-        format.json { render :json => { "links" => @results.collect { |r| { "uri" => r } } }.to_json }
-      end
+      render text: @results.to_i
     when OData::Core::Segments::ValueSegment.segment_name
-      render :text => @results.to_s
+      render text: @results.to_s
     when OData::Core::Segments::PropertySegment.segment_name
-      request.format = :atom unless request.format == :json
       path = @query.segments.map(&:value).join('/')
 
       respond_to do |format|
-        format.atom  { render :inline => "xml.instruct!; value.blank? ? xml.tag!(key.to_sym, 'm:null' => true, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:m' => 'http://docs.oasis-open.org/odata/ns/metadata') : xml.tag!(key.to_sym, value, 'edm:Type' => type, 'xmlns' => 'http://www.w3.org/2005/Atom', 'xmlns:edm' => 'http://docs.oasis-open.org/odata/ns/edm')", :locals => { :key => @results.keys.first.name, :type => @results.keys.first.return_type, :value => @results.values.first }, :type => :builder }
-        format.json do
-          json = {
-            "@odata.context" => "#{o_data_engine.metadata_url}##{path}",
+        format.atom do
+          render 'property_segment', locals: {
+            key: @results.keys.first.name,
+            type: @results.keys.first.return_type,
             value: @results.values.first
           }
-          render json: json
+        end
+        format.json do
+          render 'property_segment', locals: {
+            path: path,
+            value: @results.values.first
+          }
         end
       end
     when OData::Core::Segments::NavigationPropertySegment.segment_name
       @countable = @last_segment.countable?
       @results = Array(@results).compact
+      navigation_property = @last_segment.navigation_property
+      @expand_navigation_property_paths = @query.options[:expand].try(:navigation_property_paths)
 
-      @navigation_property = @last_segment.navigation_property
-      @polymorphic = @navigation_property.association.polymorphic?
-
-      if @polymorphic
-        @entity_type =
+      @entity_type =
+          if navigation_property.association.polymorphic?
             if @countable
-              query.segments.first.entity_type
+              @query.segments.first.entity_type
             else
-              query.data_services.find_entity_type(result.class)
+              @query.data_services.find_entity_type(@results.first.class)
             end
-        @entity_type_name = @navigation_property.name.singularize
-      else
-        @entity_type = @navigation_property.entity_type
-        @entity_type_name = @entity_type.name
-      end
+          else
+            navigation_property.entity_type
+          end
 
-      raise OData::Core::Errors::EntityTypeNotFound.new(query, result.class.name) if @entity_type.blank?
-
-      @collection_name = @entity_type_name.pluralize
-
-      @expand_navigation_property_paths = {}
-      if expand_option = @query.options[:expand]
-        @expand_navigation_property_paths = expand_option.navigation_property_paths
-      end
+      raise OData::Core::Errors::EntityTypeNotFound.new(query, @results.first.class.name) if @entity_type.blank?
 
       respond_to do |format|
         format.atom # resource.atom.builder
@@ -114,16 +100,8 @@ class ODataController < ApplicationController
     when OData::Core::Segments::CollectionSegment.segment_name
       @countable = @last_segment.countable?
       @results = Array(@results).compact
-
-      @navigation_property = nil
-      @polymorphic = true
-
       @entity_type = @last_segment.entity_type
-
-      @expand_navigation_property_paths = {}
-      if expand_option = @query.options[:expand]
-        @expand_navigation_property_paths = expand_option.navigation_property_paths
-      end
+      @expand_navigation_property_paths = @query.options[:expand].try(:navigation_property_paths)
 
       respond_to do |format|
         format.atom # resource.atom.builder
@@ -144,10 +122,7 @@ class ODataController < ApplicationController
   end
 
   def set_request_format!
-    format_option = @query.options[:format]
-    if format_option && format_option.value
-      request.format = format_option.value.to_sym
-    end
+    request.format = @query.options[:format].try(:value).try(:to_sym) || :atom
   end
 
   def handle_exception(ex)
@@ -155,7 +130,7 @@ class ODataController < ApplicationController
 
     respond_to do |format|
       format.json do
-        render json: { error: { code: "", message: ex.message } }
+        render json: { error: { code: '', message: ex.message } }
       end
     end
   end
