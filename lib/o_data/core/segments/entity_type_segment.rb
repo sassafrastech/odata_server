@@ -23,7 +23,7 @@ module OData
         end
 
         def valid?(results)
-          countable? ? results.is_a?(Array) : !results.blank?
+          results.present?
         end
       end # EntityTypeSegment
     end # Segments

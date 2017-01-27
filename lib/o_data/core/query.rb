@@ -70,7 +70,7 @@ module OData
       def _execute!
         _segments = Array(@segments).compact
         results = __execute!([], nil, _segments.shift, _segments)
-        
+
         results = with_filter_options(with_skip_and_top_options(with_orderby_option(results)))
         results
       end

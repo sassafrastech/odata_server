@@ -65,9 +65,9 @@ module OData
 
       def find_all(key_values = {}, options = nil)
         if @active_record.respond_to?(:with_permissions_to)
-          @active_record.with_permissions_to(:read).where(conditions_for_find(key_values)).to_a
+          @active_record.with_permissions_to(:read).where(conditions_for_find(key_values))
         else
-          @active_record.where(conditions_for_find(key_values)).to_a
+          @active_record.where(conditions_for_find(key_values))
         end
       end
 
@@ -86,29 +86,13 @@ module OData
 
       def self.conditions_for_find(entity_type, key_values = {})
         return "1=0" unless entity_type.is_a?(OData::ActiveRecordSchema::EntityType)
-        return "1=1" if key_values.blank?
 
-        key_values.collect { |pair|
-          property_or_str, value = pair
+        Hash[key_values.map do |k, v|
+          property = k.is_a?(Property) ? k : entity_type.find_property(k)
+          raise OData::Core::Errors::PropertyNotFound.new(nil, k) if property.blank?
 
-          property = begin
-            if property_or_str.is_a?(Property)
-              property_or_str
-            else
-              property = entity_type.find_property(property_or_str)
-              raise OData::Core::Errors::PropertyNotFound.new(nil, property_or_str) if property.blank?
-            end
-          end
-
-          [property, value]
-        }.reject { |pair|
-          pair.first.blank?
-        }.inject({}) { |acc, pair|
-          property, value = pair
-
-          acc[property.column_adapter.name.to_sym] = value
-          acc
-        }
+          [property.column_adapter.name.to_sym, v]
+        end]
       end
 
       def self.href_for(one)
