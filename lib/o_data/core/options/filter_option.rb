@@ -57,11 +57,19 @@ module OData
       end
       
       class FilterOption < OData::Core::Option
-        LOGICAL_OPERATORS = %w(eq ne gt ge lt le)
-        CONJUNCTIONS = %w(and or)
-        NEGATION = %w(not)
-        ARITHMETIC_OPERATORS = %w(add sub mul div mod)
-        PRECEDENCE = (LOGICAL_OPERATORS | CONJUNCTIONS | NEGATION | ARITHMETIC_OPERATORS)
+        HAS = %w(has) # Primary
+        NEGATION = %w(not) # Unary
+        MULTIPLICATIVE = %w(mul div mod)
+        ADDITIVE = %w(add sub)
+        RELATIONAL = %w(gt ge lt le)
+        EQUALITY = %w(eq ne)
+        AND = %w(and) # Conditional AND
+        OR = %w(or) # Conditional OR
+        PRECEDENCE = (HAS | NEGATION | MULTIPLICATIVE | ADDITIVE | RELATIONAL | EQUALITY | AND | OR)
+
+        COMPARISON_OPERATORS = (EQUALITY | RELATIONAL | HAS)
+        LOGICAL_OPERATORS = (AND | OR | NEGATION)
+        ARITHMETIC_OPERATORS = (ADDITIVE | MULTIPLICATIVE)
 
         attr_reader :filter
         
@@ -110,7 +118,8 @@ module OData
           found_filters
         end
         
-private
+        private
+
         def find_filter_from_token(prop, token, found_filters)
           return if token.nil?
           if token.left != nil && token.left.value.to_sym == prop
@@ -144,6 +153,14 @@ private
             left_val || right_val
           when :add
             left_val + right_val
+          when :sub
+            left_val - right_val
+          when :mul
+            left_val * right_val
+          when :div
+            left_val / right_val
+          when :mod
+            left_val % right_val
           else
             eval_property_or_literal(entity_type, entity, val)
           end
@@ -194,7 +211,7 @@ private
               end
             end
           end
-          if LOGICAL_OPERATORS.include?(operator) or ARITHMETIC_OPERATORS.include?(operator) then
+          if COMPARISON_OPERATORS.include?(operator) or ARITHMETIC_OPERATORS.include?(operator) then
             this_expr = BinaryTree.new(operator.to_sym, tree_tokens(left), BinaryTree.new(right[0], nil, nil))
             if (right.size >= 2)
               BinaryTree.new(right[1].to_sym, this_expr, tree_tokens(right[2, right.size]))
