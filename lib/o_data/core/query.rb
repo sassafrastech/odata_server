@@ -88,7 +88,7 @@ module OData
       private
       
       def with_filter_options(results)
-        filter_option = @options[:filter]
+        filter_option = @options[:$filter]
         if filter_option && (entity_type = filter_option.entity_type)
           results = entity_type.filter(results, filter_option)
         else
@@ -97,7 +97,7 @@ module OData
       end
       
       def with_orderby_option(results)
-        orderby_option = @options[:orderby]
+        orderby_option = @options[:$orderby]
         
         orderby = orderby_option.blank? ? nil : orderby_option.pairs
         
@@ -109,8 +109,8 @@ module OData
       end
       
       def with_skip_and_top_options(results)
-        skip_option = @options[:skip]
-        top_option = @options[:top]
+        skip_option = @options[:$skip]
+        top_option = @options[:$top]
         
         skip = skip_option.blank? ? nil : skip_option.value.to_i
         top = top_option.blank? ? nil : top_option.value.to_i

@@ -25,7 +25,7 @@ module ResourceXmlRendererHelper
       xml.tag!(:updated, Time.now.utc.iso8601)
       xml.tag!(:link, rel: 'self', title: results_title, href: results_href)
 
-      if count_option = query.options[:count] && count_option.value == 'true'
+      if count_option = query.options[:$count] && count_option.value == 'true'
         xml.m(:count, results.length)
       end
 

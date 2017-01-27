@@ -78,7 +78,7 @@ class ODataController < ApplicationController
       @countable = @last_segment.countable?
       @results = Array(@results).compact
       navigation_property = @last_segment.navigation_property
-      @expand_navigation_property_paths = @query.options[:expand].try(:navigation_property_paths)
+      @expand_navigation_property_paths = @query.options[:$expand].try(:navigation_property_paths)
 
       @entity_type =
           if navigation_property.association.polymorphic?
@@ -101,7 +101,7 @@ class ODataController < ApplicationController
       @countable = @last_segment.countable?
       @results = Array(@results).compact
       @entity_type = @last_segment.entity_type
-      @expand_navigation_property_paths = @query.options[:expand].try(:navigation_property_paths)
+      @expand_navigation_property_paths = @query.options[:$expand].try(:navigation_property_paths)
 
       respond_to do |format|
         format.atom # resource.atom.builder
@@ -122,7 +122,7 @@ class ODataController < ApplicationController
   end
 
   def set_request_format!
-    request.format = @query.options[:format].try(:value).try(:to_sym) || :atom
+    request.format = @query.options[:$format].try(:value).try(:to_sym) || :json
   end
 
   def handle_exception(ex)
