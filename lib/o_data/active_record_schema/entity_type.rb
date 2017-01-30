@@ -64,20 +64,13 @@ module OData
       end
 
       def find_all(key_values = {}, options = nil)
-        if @active_record.respond_to?(:with_permissions_to)
-          @active_record.with_permissions_to(:read).where(conditions_for_find(key_values))
-        else
-          @active_record.where(conditions_for_find(key_values))
-        end
+        conditions = conditions_for_find(key_values)
+        conditions.any? ? @active_record.where(conditions) : @active_record
       end
 
       def find_one(key_value)
-        return nil if self.key_property.blank?
-        if @active_record.respond_to?(:with_permissions_to)
-          @active_record.with_permissions_to(:read).find(key_value)
-        else
-          @active_record.find(key_value)
-        end
+        return nil if key_property.blank?
+        @active_record.find(key_value)
       end
 
       def conditions_for_find(key_values = {})
