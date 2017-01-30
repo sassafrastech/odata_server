@@ -74,6 +74,14 @@ module OData
           filter.apply(self, entity)
         end.compact
       end
+
+      def limit(results, limits)
+        skip = limits[:$skip].try(:value).try(:to_i) || 0
+        top = limits[:$top].try(:value).try(:to_i).try(:-, 1) || -1
+
+        results.slice(skip..top)
+      end
+
     end
   end
 end

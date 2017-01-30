@@ -1,9 +1,11 @@
 require_relative 'mixins/serializable'
+require_relative 'mixins/option_translator'
 
 module OData
   module ActiveRecordSchema
     class EntityType < OData::AbstractSchema::EntityType
       include Mixins::Serializable::EntityTypeInstanceMethods
+      include Mixins::OptionTranslator
 
       def self.name_for(active_record_or_str)
         name = active_record_or_str.is_a?(ActiveRecord::Base) ? active_record_or_str.name : active_record_or_str.to_s
@@ -95,6 +97,14 @@ module OData
       def href_for(one)
         self.class.href_for(one)
       end
+
+      def limit(results, limits)
+        limits.each do |key, limit|
+          results = translate_limitator(results, key, limit.value)
+        end
+        results
+      end
+
     end
   end
 end

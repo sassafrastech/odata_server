@@ -92,13 +92,7 @@ module OData
         def self.applies_to?(query)
           true
         end
-        
-        def entity_type
-          return nil if self.query.segments.empty?
-          return nil unless self.query.segments.last.respond_to?(:entity_type)
-          @entity_type ||= self.query.segments.last.entity_type
-        end
-        
+
         def valid?
           entity_type = self.entity_type
           return false if entity_type.blank?

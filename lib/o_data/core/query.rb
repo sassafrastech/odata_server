@@ -70,9 +70,7 @@ module OData
       def _execute!
         _segments = Array(@segments).compact
         results = __execute!([], nil, _segments.shift, _segments)
-
-        results = with_filter_options(with_skip_and_top_options(with_orderby_option(results)))
-        results
+        with_filter_options(with_skip_and_top_options(with_orderby_option(results)))
       end
       
       def __execute!(seen, acc, head, rest)
@@ -109,18 +107,11 @@ module OData
       end
       
       def with_skip_and_top_options(results)
-        skip_option = @options[:$skip]
-        top_option = @options[:$top]
-        
-        skip = skip_option.blank? ? nil : skip_option.value.to_i
-        top = top_option.blank? ? nil : top_option.value.to_i
-        
-        if skip && top
-          results = results.slice(skip, top)
-        elsif skip
-          results = results.slice(skip..-1)
-        elsif top
-          results = results.slice(0, top)
+        opts = @options.slice(:$skip, :$top)
+        entity_type = opts.values.find(&:entity_type).try(:entity_type)
+
+        if entity_type
+          entity_type.limit(results, opts)
         else
           results
         end
