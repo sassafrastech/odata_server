@@ -98,6 +98,11 @@ module OData
         self.class.href_for(one)
       end
 
+      def filter(results, filter_option)
+        filter = filter_option.filter
+        translate_filter(results, filter.value, filter.left, filter.right)
+      end
+
       def limit(results, limits)
         limits.each do |key, limit|
           results = translate_limitator(results, key, limit.value)
