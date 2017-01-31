@@ -88,8 +88,9 @@ module OData
       
       def with_filter_options(results)
         filter_option = @options[:$filter]
+
         if filter_option && (entity_type = filter_option.entity_type)
-          results = entity_type.filter(results, filter_option)
+          entity_type.filter(results, filter_option)
         else
           results
         end
@@ -97,11 +98,10 @@ module OData
       
       def with_orderby_option(results)
         orderby_option = @options[:$orderby]
-        
-        orderby = orderby_option.blank? ? nil : orderby_option.pairs
-        
+        orderby = orderby_option.try(:pairs)
+
         if orderby && (entity_type = orderby_option.entity_type)
-          results = entity_type.sort(results, orderby)
+          entity_type.sort(results, orderby)
         else
           results
         end

@@ -110,6 +110,13 @@ module OData
         results
       end
 
+      def sort(results, orderby)
+        orderby.each do |pair|
+          results = results.order(pair.first.column_adapter.name => pair.last)
+        end
+        results
+      end
+
     end
   end
 end
