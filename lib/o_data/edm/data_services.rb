@@ -2,11 +2,19 @@ module OData
   module Edm
     class DataServices
       cattr_accessor :schemas
-      @@schemas = []
+      @@schemas = {}
+
+      def self.get_schema(key, klass, &block)
+        if !@@schemas.include?(key)
+          opts = block.call if block
+          @@schemas[key] = klass.to_s.classify.constantize.new(*opts)
+        end
+        @@schemas[key]
+      end
 
       attr_accessor :entity_types, :schemas
       
-      def initialize(schemas = @@schemas)
+      def initialize(schemas = @@schemas.try(:values)||[])
         @entity_types = []
         @schemas = schemas.dup || []
         schemas.each do |schema|
