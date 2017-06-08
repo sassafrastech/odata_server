@@ -29,8 +29,18 @@ module OData
       end
 
       def partner
-        p = Object.const_get(name.camelize).reflections[entity_type.name.to_sym]
-        p.name.camelize if p
+        klass = nil
+        begin
+          klass = Object.const_get(name.camelize)
+        rescue
+          klass = Object.const_get(name.sub(/s$/, '').camelize)
+        end
+        reflection_map = Hash[klass.reflections.map{|k,v| [k.classify,v]}] unless klass.nil?
+        p = reflection_map[entity_type.name.to_s] unless reflection_map.nil?
+        relation_name = self.name.to_s.classify if p
+        relation_name = relation_name.pluralize if relation_name.present? && self.association.options[:multiple]
+        #relation_name
+        p.name.to_s.classify if p
       end
     end
   end
