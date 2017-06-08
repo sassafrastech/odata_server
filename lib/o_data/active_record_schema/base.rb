@@ -8,6 +8,10 @@ module OData
       def include_fields(*field_names)
         @included_fields = Hash[field_names.map{|v| [v.to_sym, {}]}]
       end
+      def configure(field, options = {})
+        @included_fields ||= {}
+        @included_fields[field.to_sym] = options
+      end
     end
     class Base < OData::AbstractSchema::Base
       #attr_reader :classes, :reflection

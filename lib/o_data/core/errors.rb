@@ -66,6 +66,18 @@ module OData
           "Key property '#{self.key.to_s}' for model must be included"
         end
       end
+      #TODO move to AR error?
+      class MethodNotConfigured < StandardError
+        attr_reader :key
+
+        def initialize(key)
+          @key = key
+        end
+
+        def to_s
+          "Method '#{self.key.to_s}' for model must be configured with return_type/nullable"
+        end
+      end
       
       class NavigationPropertyNotFound < ParseQuerySegmentException
         def to_s

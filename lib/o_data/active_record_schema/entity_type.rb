@@ -27,6 +27,16 @@ module OData
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
+        # included_fields is a hash keys are fields, values are options
+        # if a field is a method, use that accessor, and options to configure everything else, if options blank look for prop and default from there
+        unless options[:included_fields].blank?
+          @active_record.instance_methods.each do |method_name|
+            if options[:included_fields].include?(method_name)
+              method_options = options[:included_fields][method_name].merge(get_property_options_from_column(method_name))
+              property = self.Property(method_name, method_options)
+            end
+          end
+        end
         @active_record.columns.each do |column_adapter|
           if @properties[column_adapter.name.to_s].blank?
             column_name = column_adapter.name.to_s.underscore.to_sym
