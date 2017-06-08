@@ -1,9 +1,12 @@
 module OData
   module ActiveRecordSchema
     class Config
-      attr_reader :reflection
+      attr_reader :reflection, :included_fields
       def reflection(val = true)
         @reflection = val
+      end
+      def include_fields(*field_names)
+        @included_fields = Hash[field_names.map{|v| [v.to_sym, {}]}]
       end
     end
     class Base < OData::AbstractSchema::Base

@@ -53,6 +53,19 @@ module OData
           "Property not found for the segment '#{self.str.to_s}'"
         end
       end
+
+      #TODO move to AR error?
+      class KeyNotIncluded < StandardError
+        attr_reader :key
+
+        def initialize(key)
+          @key = key
+        end
+
+        def to_s
+          "Key property '#{self.key.to_s}' for model must be included"
+        end
+      end
       
       class NavigationPropertyNotFound < ParseQuerySegmentException
         def to_s

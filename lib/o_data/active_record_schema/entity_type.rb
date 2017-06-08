@@ -28,12 +28,21 @@ module OData
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
         @active_record.columns.each do |column_adapter|
-          property = self.Property(column_adapter)
+          if @properties[column_adapter.name.to_s].blank?
+            column_name = column_adapter.name.to_s.underscore.to_sym
+            column_options = options[:included_fields].blank? ? {} : options[:included_fields][column_name]
+            column_options = (column_options||{}).merge(get_property_options_from_column(column_name))
+            property = self.Property(column_adapter, column_options) if options[:included_fields].blank? || options[:included_fields].include?(column_adapter.name.to_s.underscore.to_sym)
+          end
 
-          if key_property_name == property.name.underscore
-            self.key_property = property
+          if !property.nil?
+            if key_property_name == property.name.underscore
+              self.key_property = property
+            end
           end
         end
+
+        raise OData::Core::Errors::KeyNotIncluded.new(key_property_name) if self.key_property.nil?
 
         OData::AbstractSchema::Mixins::Serializable.atom_element_names.each do |atom_element_name|
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
@@ -53,8 +62,20 @@ module OData
         end
       end
 
-      def Property(*args)
-        property = Property.new(self, *args)
+      def get_property_options_from_column(column_name)
+        @active_record.columns.each do |column_adapter|
+          if column_adapter.name.to_s.underscore.to_sym == column_name.to_sym
+            return {
+              return_type: column_adapter.type,
+              nullable: column_adapter.null
+            }
+          end
+        end
+        {}
+      end
+
+      def Property(column, options = {})
+        property = Property.new(self, column, options)
         @properties[property.name] = property
         property
       end
