@@ -1,4 +1,4 @@
-class ODataController < ApplicationController
+class ODataController < OData.parent_controller.constantize
   include ActionController::MimeResponds
   include ActionController::Helpers
 
