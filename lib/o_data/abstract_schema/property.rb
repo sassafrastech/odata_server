@@ -34,6 +34,10 @@ module OData
         one.send(@name)
       end
 
+      def set_value_for(one, value)
+        one.send("#{@name}=", value)
+      end
+
       def qualified_name
         @entity_type.qualified_name.to_s + '#' + self.name
       end

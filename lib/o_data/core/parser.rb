@@ -8,10 +8,10 @@ module OData
         @data_services = data_services
       end
 
-      def parse!(params)
+      def parse!(params, query_params)
         query = OData::Core::Query.new(data_services)
         resource_path_components = params[:path].split('/')
-        query_string_components = params.except(:path)
+        query_string_components = query_params.except(:path)
 
         resource_path_components.each do |resource_path_component|
           _parse_segment!(query, resource_path_component)

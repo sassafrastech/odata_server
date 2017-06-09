@@ -5,9 +5,10 @@ module OData
         reflection.name.to_s
       end
 
-      def initialize(entity_type, reflection)
-        @entity_type = entity_type
-        super(entity_type, self.class.name_for(reflection), Association(reflection))
+      def initialize(parent_entity_type, reflection)
+        @parent_entity_type = parent_entity_type
+        entity_type = klass(self.class.name_for(reflection))
+        super(parent_entity_type, entity_type, self.class.name_for(reflection), Association(reflection))
       end
 
       def method_name
@@ -28,15 +29,19 @@ module OData
         self.association = Association.new(self, *args)
       end
 
-      def partner
-        klass = nil
+      def klass(name=@name)
+        response = nil
         begin
-          klass = Object.const_get(name.camelize)
+          response = Object.const_get(name.camelize)
         rescue
-          klass = Object.const_get(name.sub(/s$/, '').camelize)
+          response = Object.const_get(name.sub(/s$/, '').camelize)
         end
+        response
+      end
+
+      def partner
         reflection_map = Hash[klass.reflections.map{|k,v| [k.classify,v]}] unless klass.nil?
-        p = reflection_map[entity_type.name.to_s] unless reflection_map.nil?
+        p = reflection_map[parent_entity_type.name.to_s] unless reflection_map.nil?
         relation_name = self.name.to_s.classify if p
         relation_name = relation_name.pluralize if relation_name.present? && self.association.options[:multiple]
         #relation_name

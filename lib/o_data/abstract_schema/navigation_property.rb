@@ -6,17 +6,22 @@ module OData
       extend Forwardable
       include Mixins::Schematize
 
-      def_delegators :@entity_type, :schema
+      def_delegators :@parent_entity_type, :schema
 
-      attr_reader :entity_type
+      attr_reader :entity_type_class, :parent_entity_type
       attr_accessor :association
 
-      def initialize(entity_type, name, association, options = {})
-        @entity_type = entity_type
+      def initialize(parent_entity_type, entity_type_class, name, association, options = {})
+        @parent_entity_type = parent_entity_type
+        @entity_type_class = entity_type_class
         @name = name
         @association = association
 
         name = name.pluralize if @association.options[:multiple]
+      end
+
+      def entity_type
+        @parent_entity_type.schema.find_entity_type(@entity_type_class)
       end
 
       def return_type

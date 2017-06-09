@@ -42,10 +42,16 @@ module OData
       end
 
       def value_for(one)
-        v = one.send(@column_adapter.is_a?(Symbol) ? @column_adapter : @column_adapter.name.to_sym)
+        column_name = @column_adapter.is_a?(Symbol) ? @column_adapter : @column_adapter.name.to_sym
+        v = one.send(column_name)
         return v.to_f if return_type == 'Edm.Decimal'
         return v.iso8601 if v.respond_to?(:iso8601)
         v
+      end
+
+      def set_value_for(one, value)
+        column_name = @column_adapter.is_a?(Symbol) ? @column_adapter : @column_adapter.name.to_sym
+        one.send("#{column_name}=", value)
       end
     end
   end

@@ -106,6 +106,38 @@ module OData
         @active_record.find(key_value)
       end
 
+      def create_one(incoming_data)
+        new_entity = @active_record.new
+        expanded_properties = []
+
+        self.properties.each do |property_name,odata_property_metadata|
+          if incoming_data.include? property_name
+            odata_property_metadata.set_value_for(new_entity, incoming_data[property_name])
+          end
+        end
+        #TODO prevent retrieving/posting associations via config, maybe included fields or something
+        self.navigation_properties.each do |assocation_name, odata_association_metadata|
+          child_entity_type = odata_association_metadata.entity_type
+          if incoming_data.include?(assocation_name) && child_entity_type.present?
+            expanded_properties << assocation_name
+            if odata_association_metadata.association.multiple?
+              incoming_data[assocation_name].each do |incoming_child_data|
+                #TODO make expanded_properties recursive
+                new_child_entity = child_entity_type.create_one(incoming_child_data)
+                proxy = new_entity.send("#{odata_association_metadata.association.reflection.name}")
+                proxy << new_child_entity
+              end
+            else
+              new_child_entity = child_entity_type.create_one(incoming_data[assocation_name])
+              raise "not sure how to handle this"
+              #proxy = new_entity.send("#{odata_association_metadata.association.reflection.name}", new_child_entity)
+            end
+          end
+        end
+
+        [new_entity, expanded_properties]
+      end
+
       def conditions_for_find(key_values = {})
         self.class.conditions_for_find(self, key_values)
       end

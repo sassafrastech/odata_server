@@ -56,6 +56,10 @@ module OData
         find_all(@key_property => key_value).first
       end
 
+      def create_one
+        nil
+      end
+
       def exists?(key_value)
         !!find_one(key_value)
       end

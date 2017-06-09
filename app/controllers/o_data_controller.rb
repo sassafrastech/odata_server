@@ -11,7 +11,8 @@ class ODataController < ApplicationController
   rescue_from OData::ODataException, :with => :handle_exception
   rescue_from ActiveRecord::RecordNotFound, :with => :handle_exception
 
-  skip_before_action :verify_authenticity_token, only: :options
+  #TODO! remove resource and use https://issues.oasis-open.org/browse/ODATA-262
+  skip_before_action :verify_authenticity_token, only: [:options, :resource]
 
   before_action :parse_url, only: :resource
   before_action :set_request_format!, only: :resource
@@ -103,6 +104,28 @@ class ODataController < ApplicationController
       @entity_type = @last_segment.entity_type
       @expand_navigation_property_paths = @query.options[:$expand].try(:navigation_property_paths)
 
+      if request.request_method == 'POST'
+        #create an @entity_type.active_record object
+        #reverse map from body, basically opposite of ResourceJsonRendererHelper (or xml)
+        return render text: "only JSON POST supported", status: 501 if request.format != 'application/json'
+        incoming_data = params.except(:format, :controller, :action, :path)
+
+        new_entity, expanded_properties = @entity_type.create_one(incoming_data)
+
+        return render text: "cannot create #{@entity_type.name}", status: 501 if new_entity.nil?
+
+        if new_entity.save
+          #TODO other security concerns or validations, like at least one child required, can only set certain values, or default values
+          response.status = 201
+          @countable = false
+          @results = [new_entity]
+          @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
+        else
+          response.status = 400
+          return render json: new_entity.errors.messages
+        end
+      end
+
       respond_to do |format|
         format.atom # resource.atom.builder
         format.json # resource.json.erb
@@ -118,7 +141,7 @@ class ODataController < ApplicationController
   private
 
   def parse_url
-    @query = @@parser.parse!(params.except(:controller, :action))
+    @query = @@parser.parse!(params.except(:controller, :action), request.query_parameters)
   end
 
   def set_request_format!
