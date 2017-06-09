@@ -25,6 +25,8 @@ module OData
 
         @active_record = active_record
 
+        @constructor = options[:constructor] || Proc.new{|hash| @active_record.new(hash)}
+
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
         # included_fields is a hash keys are fields, values are options
@@ -107,14 +109,16 @@ module OData
       end
 
       def create_one(incoming_data)
-        new_entity = @active_record.new
+        incoming_entity_data = Hash[incoming_data.map{
+            |k,v|
+          self.properties[k].present? ? [Property.name_for(self.properties[k].column_adapter).to_sym,v] : nil
+        }.reject{
+            |k,v|
+          v.nil?
+        }]
+        new_entity = @constructor.call(incoming_entity_data)
         expanded_properties = []
 
-        self.properties.each do |property_name,odata_property_metadata|
-          if incoming_data.include? property_name
-            odata_property_metadata.set_value_for(new_entity, incoming_data[property_name])
-          end
-        end
         #TODO prevent retrieving/posting associations via config, maybe included fields or something
         self.navigation_properties.each do |assocation_name, odata_association_metadata|
           child_entity_type = odata_association_metadata.entity_type

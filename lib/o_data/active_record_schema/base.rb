@@ -1,7 +1,7 @@
 module OData
   module ActiveRecordSchema
     class Config
-      attr_reader :reflection, :included_fields
+      attr_reader :reflection, :included_fields, :constructor
       def reflection(val = true)
         @reflection = val
       end
@@ -11,6 +11,9 @@ module OData
       def configure(field, options = {})
         @included_fields ||= {}
         @included_fields[field.to_sym] = options
+      end
+      def constructor(proc)
+        @constructor = proc
       end
     end
     class Base < OData::AbstractSchema::Base
