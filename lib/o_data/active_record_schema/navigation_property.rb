@@ -17,11 +17,13 @@ module OData
 
       def find_all(one, key_values = {})
         results = one.send(method_name)
+        results = self.entity_type.scope.nil? ? results : results.send(self.entity_type.scope)
         results.where(self.entity_type.conditions_for_find(key_values))
       end
 
       def find_one(one, key_value = nil)
         results = one.send(method_name)
+        results = self.entity_type.scope.nil? ? results : results.send(self.entity_type.scope)
         results.find(key_value)
       end
 

@@ -16,7 +16,7 @@ module OData
         active_record.primary_key
       end
 
-      attr_reader :active_record
+      attr_reader :active_record, :scope
 
       def initialize(schema, active_record, options = {})
         super(schema, self.class.name_for(active_record))
@@ -26,6 +26,8 @@ module OData
         @active_record = active_record
 
         @constructor = options[:constructor] || Proc.new{|hash| @active_record.new(hash)}
+
+        @scope = options[:scope]
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
@@ -99,13 +101,15 @@ module OData
       end
 
       def find_all(key_values = {}, options = nil)
+        scope = @scope.nil? ? @active_record : @active_record.send(@scope)
         conditions = conditions_for_find(key_values)
-        conditions.any? ? @active_record.where(conditions) : @active_record
+        conditions.any? ? scope.where(conditions) : scope
       end
 
       def find_one(key_value)
+        scope = @scope.nil? ? @active_record : @active_record.send(@scope)
         return nil if key_property.blank?
-        @active_record.find(key_value)
+        scope.find(key_value)
       end
 
       def create_one(incoming_data)
