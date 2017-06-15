@@ -34,7 +34,7 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
               Hash[entity_type.navigation_properties.sort].each do |_, navigation_property|
                 if navigation_property.partner
                   xml.tag!(:NavigationPropertyBinding, Path: navigation_property.plural_name,
-                                                       EntitySet: "#{schema.namespace}.#{schema.namespace}Service.#{navigation_property.plural_name}")
+                                                       Target: "#{schema.namespace}.#{schema.namespace}Service.#{navigation_property.plural_name}")
                 end
               end
             end
