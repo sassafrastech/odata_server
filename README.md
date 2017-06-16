@@ -69,13 +69,16 @@ class Foo
     @bar = bar
     @baz = baz
   end
+
+  def sel.all
+    (1..20).map do |n|
+      Foo.new(n, "test", "test #{n}")
+    end
+  end
 end
 
 inmem = OData::InMemorySchema::Base.new("InMem", classes: Foo)
 OData::Edm::DataServices.schemas << inmem
-(1..20).each do |n|
-  inmem.find_entity_type("Foo").entities.append(Foo.new(n, "test", "test #{n}"))
-end
 ```
 
 ActiveRecordSchema and InMemorySchema can either take a single classe or an array of classes.
