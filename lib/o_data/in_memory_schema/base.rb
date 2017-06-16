@@ -6,7 +6,7 @@ module OData
       def initialize(namespace = "OData", options = {})
         super(namespace)
         @classes = Array(options[:classes])
-        self.register(classes)
+        self.register(classes, options[:key])
       end
 
       def register(cls, key = nil)
