@@ -5,8 +5,7 @@ module OData
         cls.primary_key
       end
 
-      attr_reader :cls
-      attr_accessor :entities
+      attr_reader :cls, :klass
 
       def initialize(schema, cls, options = {})
         super(schema, cls.name.demodulize)
@@ -25,7 +24,7 @@ module OData
           @key_property ||= object_id_property
         end
         @navigation_properties = []
-        @entities = options[:entities] || []
+        @klass = schema.classes.find { |c| c.to_s.match(name) }
       end
 
       def Property(*args)
@@ -41,12 +40,17 @@ module OData
       end
 
       def find_all(key_values = {}, options = nil)
-        @entities
+        results = klass.respond_to?(:all) ? klass.all : []
+        if key_values.any?
+          results.select { |r| key_values.all? { |k, v| r.send(k).to_s == v.to_s } }
+        else
+          results
+        end
       end
       
       def find_one(key_value)
         return nil if @key_property.blank?
-        find_all(@key_property => key_value).first
+        find_all(key_property.name.underscore => key_value).first
       end
       
       def exists?(key_value)
