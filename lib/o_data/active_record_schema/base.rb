@@ -21,6 +21,9 @@ module OData
       def default_scope(symbol)
         @scope = symbol
       end
+      def entity_set(val = true)
+        @entity_set = val
+      end
     end
     class Base < OData::AbstractSchema::Base
       #attr_reader :classes, :reflection

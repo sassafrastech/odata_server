@@ -31,7 +31,7 @@ module OData
       end
 
       def to_json
-        @entity_types.map do |entity|
+        @entity_types.select{|entity| entity.entity_set}.map do |entity|
           { name: entity.plural_name, kind: 'EntitySet', url: entity.plural_name }
         end
       end

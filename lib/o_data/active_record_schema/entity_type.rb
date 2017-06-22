@@ -16,7 +16,7 @@ module OData
         active_record.primary_key
       end
 
-      attr_reader :active_record, :scope
+      attr_reader :active_record, :scope, :entity_set
 
       def initialize(schema, active_record, options = {})
         super(schema, self.class.name_for(active_record))
@@ -29,6 +29,8 @@ module OData
         @destructor = options[:destructor] || Proc.new{|one| one.destroy if one.respond_to?(:destroy)}
 
         @scope = options[:scope]
+
+        @entity_set = options[:entity_set]
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
