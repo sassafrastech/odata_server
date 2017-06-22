@@ -56,6 +56,10 @@ module OData
         find_all(@key_property => key_value).first
       end
 
+      def delete_one(one)
+
+      end
+
       def create_one
         nil
       end

@@ -124,6 +124,12 @@ class ODataController < OData.parent_controller.constantize
           response.status = 400
           return render json: new_entity.errors.messages
         end
+      elsif request.request_method == 'DELETE'
+        return render text: "cannot delete multiple #{@entity_type.name}", status: 400 if @countable
+        obj = @results.first
+        if obj.present?
+          @entity_type.delete_one(obj)
+        end
       end
 
       respond_to do |format|

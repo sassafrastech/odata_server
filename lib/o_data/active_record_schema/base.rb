@@ -1,7 +1,7 @@
 module OData
   module ActiveRecordSchema
     class Config
-      attr_reader :reflection, :included_fields, :constructor, :scope
+      attr_reader :reflection, :included_fields, :constructor, :scope, :destructor
       def reflection(val = true)
         @reflection = val
       end
@@ -14,6 +14,9 @@ module OData
       end
       def constructor(proc)
         @constructor = proc
+      end
+      def destructor(proc)
+        @destructor = proc
       end
       def default_scope(symbol)
         @scope = symbol

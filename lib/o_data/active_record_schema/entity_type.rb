@@ -26,6 +26,7 @@ module OData
         @active_record = active_record
 
         @constructor = options[:constructor] || Proc.new{|hash| @active_record.new(hash)}
+        @destructor = options[:destructor] || Proc.new{|one| one.destroy if one.respond_to?(:destroy)}
 
         @scope = options[:scope]
 
@@ -110,6 +111,10 @@ module OData
         scope = @scope.nil? ? @active_record : @active_record.send(@scope)
         return nil if key_property.blank?
         scope.find(key_value)
+      end
+
+      def delete_one(one)
+        @destructor.call(one)
       end
 
       def create_one(incoming_data)
