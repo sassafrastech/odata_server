@@ -23,7 +23,7 @@ module OData
         end
 
         def valid?(results)
-          results.present?
+          true #results.present?
         end
       end # EntityTypeSegment
     end # Segments
