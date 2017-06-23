@@ -107,29 +107,38 @@ class ODataController < OData.parent_controller.constantize
       if request.request_method == 'POST'
         #create an @entity_type.active_record object
         #reverse map from body, basically opposite of ResourceJsonRendererHelper (or xml)
-        return render text: "only JSON POST supported", status: 501 if request.format != 'application/json'
-        incoming_data = params.except(:format, :controller, :action, :path)
+        return handle_exception("only JSON POST supported", 501) if request.format != 'application/json'
+        begin
+          incoming_data = params.except(:format, :controller, :action, :path)
 
-        new_entity, expanded_properties = @entity_type.create_one(incoming_data)
+          new_entity, expanded_properties = @entity_type.create_one(incoming_data)
 
-        return render text: "cannot create #{@entity_type.name}", status: 501 if new_entity.nil?
+          return handle_exception("cannot create #{@entity_type.name}", 501) if new_entity.nil?
 
-        if new_entity.save
-          #TODO other security concerns or validations, like at least one child required, can only set certain values, or default values
-          response.status = 201
-          @countable = false
-          @results = [new_entity]
-          @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
-        else
-          response.status = 400
-          return render json: new_entity.errors.messages
+          if new_entity.save
+            #TODO other security concerns or validations, like at least one child required, can only set certain values, or default values
+            response.status = 201
+            @countable = false
+            @results = [new_entity]
+            @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
+          else
+            response.status = 400
+            return render json: new_entity.errors.messages
+          end
+        rescue ActiveRecord::RecordInvalid => invalid
+          return handle_exception(invalid.record.errors, 400)
+        rescue ActiveRecord::RecordNotUnique => invalid
+          return handle_exception(invalid.record.errors, 409)
         end
       elsif request.request_method == 'DELETE'
-        return render text: "cannot delete multiple #{@entity_type.name}", status: 400 if @countable
+        return handle_exception("cannot delete multiple #{@entity_type.name}", 400) if @countable
+        return head 404 if !@countable && @results.empty?
         obj = @results.first
         if obj.present?
           @entity_type.delete_one(obj)
         end
+      elsif request.request_method == 'GET'
+        return head 404 if !@countable && @results.empty?
       end
 
       respond_to do |format|
@@ -154,12 +163,13 @@ class ODataController < OData.parent_controller.constantize
     request.format = @query.options[:$format].try(:value).try(:to_sym) || :json
   end
 
-  def handle_exception(ex)
+  def handle_exception(ex, status_code=500)
     request.format = :json
+    response.status = status_code
 
     respond_to do |format|
       format.json do
-        render json: { error: { code: '', message: ex.message } }
+        render json: { error: { code: '', message: ex.respond_to?(:message) ? ex.message : ex } }
       end
     end
   end

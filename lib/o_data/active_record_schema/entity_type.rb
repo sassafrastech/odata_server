@@ -112,7 +112,8 @@ module OData
       def find_one(key_value)
         scope = @scope.nil? ? @active_record : @active_record.send(@scope)
         return nil if key_property.blank?
-        scope.find(key_value)
+        vals = Hash[[[key_property.column_adapter.name.to_sym, key_value]]]
+        scope.where(vals).first
       end
 
       def delete_one(one)
