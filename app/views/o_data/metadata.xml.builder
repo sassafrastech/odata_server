@@ -10,7 +10,13 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
           xml.tag!(:EntityType, Name: entity_type.name) do
             unless entity_type.key_property.blank?
               xml.tag!(:Key) do
-                xml.tag!(:PropertyRef, Name: entity_type.key_property.name)
+								if entity_type.key_property.is_a?(Array)
+									entity_type.key_property.each do |kp|
+										xml.tag!(:PropertyRef, Name: kp.name)
+									end
+								else
+                	xml.tag!(:PropertyRef, Name: entity_type.key_property.name)
+								end
               end
             end
 

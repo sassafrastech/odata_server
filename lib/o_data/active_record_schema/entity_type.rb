@@ -32,7 +32,15 @@ module OData
 
         @entity_set = options[:entity_set]
 
-        key_property_name = self.class.primary_key_for(@active_record).to_s
+        @composite_key = options[:composite_key]
+
+        key_property_names = []
+        key_properties = []
+        if @composite_key.present?
+          key_property_names = @composite_key.map{|k| k.to_s}
+        else
+          key_property_names << self.class.primary_key_for(@active_record).to_s
+        end
 
         # included_fields is a hash keys are fields, values are options
         # if a field is a method, use that accessor, and options to configure everything else, if options blank look for prop and default from there
@@ -53,13 +61,15 @@ module OData
           end
 
           if !property.nil?
-            if key_property_name == property.name.underscore
-              self.key_property = property
+            if key_property_names.include?(property.name.underscore)
+              key_properties << property
             end
           end
         end
 
-        raise OData::Core::Errors::KeyNotIncluded.new(key_property_name) if self.key_property.nil?
+        self.key_property = @composite_key.present? ? key_properties : key_properties.first
+
+        raise OData::Core::Errors::KeyNotIncluded.new(key_property_names.join(', ')) if self.key_property.blank? || (@composite_key.present? && @composite_key.count != self.key_property.count)
 
         OData::AbstractSchema::Mixins::Serializable.atom_element_names.each do |atom_element_name|
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
@@ -111,9 +121,20 @@ module OData
 
       def find_one(key_value)
         scope = @scope.nil? ? @active_record : @active_record.send(@scope)
+
         return nil if key_property.blank?
-        vals = Hash[[[key_property.column_adapter.name.to_sym, key_value]]]
-        scope.where(vals).first
+        return nil if key_value.blank?
+        return nil if key_property.is_a?(Array) != key_value.is_a?(Array)
+        return nil if key_property.is_a?(Array) && key_property.count != key_value.count
+
+        conditions = {}
+        if key_property.is_a?(Array)
+          conditions = Hash[key_property.map_with_index{|k, i| [k.column_adapter.name.to_sym, key_value[i]]}]
+        else
+          conditions = {key_property.column_adapter.name.to_sym => key_value}
+        end
+
+        scope.where(conditions).first
       end
 
       def delete_one(one)

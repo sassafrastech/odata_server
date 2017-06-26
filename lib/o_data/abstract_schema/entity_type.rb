@@ -23,7 +23,13 @@ module OData
       end
 
       def key_property=(property)
-        return nil unless property.is_a?(Property) && find_property(property.name)
+        if property.is_a?(Array)
+          return nil if property.select{
+              |p|
+            !(p.is_a?(Property) && find_property(p.name))}.any?
+        else
+          return nil unless property.is_a?(Property) && find_property(property.name)
+        end
         @key_property = property
       end
 
@@ -53,7 +59,17 @@ module OData
 
       def find_one(key_value)
         return nil if @key_property.blank?
-        find_all(@key_property => key_value).first
+        return nil if key_value.blank?
+        return nil if @key_property.is_a?(Array) != key_value.is_a?(Array)
+        return nil if @key_property.is_a?(Array) && @key_property.count != key_value.count
+
+        conditions = {}
+        if @key_property.is_a?(Array)
+          conditions = Hash[@key_property.map_with_index{|k, i| [k, key_value[i]]}]
+        else
+          conditions = {@key_property => key_value}
+        end
+        find_all(conditions).first
       end
 
       def delete_one(one)
@@ -74,7 +90,11 @@ module OData
 
       def primary_key_for(one)
         return nil if @key_property.blank?
-        @key_property.value_for(one)
+        if @key_property.is_a?(Array)
+          Hash[@key_property.map{|k| [k, k.value_for(one)]}]
+        else
+          @key_property.value_for(one)
+        end
       end
 
       def filter(results, filter)

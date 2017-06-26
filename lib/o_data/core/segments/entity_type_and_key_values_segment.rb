@@ -31,7 +31,6 @@ module OData
         end
 
         def self.sanitize_key_values_and_keys_for!(query, entity_type, key_values = {}, keys = [])
-          key_property_name = entity_type.key_property.name
 
           sanitized_key_values = key_values.inject({}) { |acc, key_value_pair|
             key, value = key_value_pair
@@ -45,10 +44,17 @@ module OData
             acc
           }
 
-          keys.inject(sanitized_key_values) { |acc, key_value| 
-            raise OData::Core::Errors::CoreKeyValueException.new(query, key_property_name, key_value) unless acc[key_property_name.to_sym].blank?
-            
-            acc[key_property_name.to_sym] = key_value
+          key_property_names = entity_type.key_property.is_a?(Array) ? entity_type.key_property.map{|p| p.name} : [entity_type.key_property.name]
+          keys.inject(sanitized_key_values) { |acc, key_value|
+            raise OData::Core::Errors::CoreKeyValueException.new(query, key_property_names.join(', '), key_value) unless key_property_names.select{|p| acc.keys.include?(p)}.blank?
+
+            if entity_type.key_property.is_a?(Array)
+              key_property_names.each_with_index do |p, i|
+                acc[p.to_sym] = key_value[i]
+              end
+            else
+              acc[key_property_names.first.to_sym] = key_value
+            end
             acc
           }
         end

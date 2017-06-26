@@ -1,7 +1,7 @@
 module OData
   module ActiveRecordSchema
     class Config
-      attr_reader :reflection, :included_fields, :constructor, :scope, :destructor
+      attr_reader :reflection, :included_fields, :constructor, :scope, :destructor, :composite_key
       def reflection(val = true)
         @reflection = val
       end
@@ -23,6 +23,9 @@ module OData
       end
       def entity_set(val = true)
         @entity_set = val
+      end
+      def composite_key(*fields)
+        @composite_key = fields
       end
     end
     class Base < OData::AbstractSchema::Base
