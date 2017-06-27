@@ -44,7 +44,7 @@ module OData
       def value_for(one)
         column_name = @column_adapter.is_a?(Symbol) ? @column_adapter : @column_adapter.name.to_sym
         v = one.send(column_name)
-        return v.to_f if return_type == 'Edm.Decimal'
+        return v.to_f if return_type == 'Edm.Decimal' && !v.nil?
         return v.iso8601 if v.respond_to?(:iso8601)
         v
       end
