@@ -137,6 +137,13 @@ module OData
         scope.where(conditions).first
       end
 
+      def find_property_by_column_name(column_name)
+        @properties.select{
+            |k,p|
+          Property.name_for(p.column_adapter) == column_name.to_s
+        }.map{|k,p| p}.first
+      end
+
       def delete_one(one)
         @destructor.call(one)
       end

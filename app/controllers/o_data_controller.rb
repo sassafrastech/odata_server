@@ -123,12 +123,12 @@ class ODataController < OData.parent_controller.constantize
             @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
           else
             response.status = 400
-            return render json: new_entity.errors.messages
+            return render json: convert_ar_errors_to_metadata_errors(new_entity.errors.messages)
           end
         rescue ActiveRecord::RecordInvalid => invalid
-          return handle_exception(invalid.record.errors, 400)
+          return handle_exception(convert_ar_errors_to_metadata_errors(invalid.record.errors.messages), 400)
         rescue ActiveRecord::RecordNotUnique => invalid
-          return handle_exception(invalid.record.errors, 409)
+          return handle_exception(convert_ar_errors_to_metadata_errors(invalid.record.errors.messages), 409)
         end
       elsif request.request_method == 'DELETE'
         return handle_exception("cannot delete multiple #{@entity_type.name}", 400) if @countable
@@ -154,6 +154,13 @@ class ODataController < OData.parent_controller.constantize
   end
 
   private
+
+  def convert_ar_errors_to_metadata_errors(errors_hash)
+    Hash[errors_hash.map{
+        |k,v|
+      [@entity_type.find_property_by_column_name(k).name, v]
+    }]
+  end
 
   def parse_url
     @query = @@parser.parse!(params.except(:controller, :action), request.query_parameters)
