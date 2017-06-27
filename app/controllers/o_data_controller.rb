@@ -115,20 +115,17 @@ class ODataController < OData.parent_controller.constantize
 
           return handle_exception("cannot create #{@entity_type.name}", 501) if new_entity.nil?
 
-          if new_entity.save
-            #TODO other security concerns or validations, like at least one child required, can only set certain values, or default values
-            response.status = 201
-            @countable = false
-            @results = [new_entity]
-            @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
-          else
-            response.status = 400
-            return render json: convert_ar_errors_to_metadata_errors(new_entity.errors.messages)
-          end
+          response.status = 201
+          @countable = false
+          @results = [new_entity]
+          @expand_navigation_property_paths = Hash[expanded_properties.map{|p| [@entity_type.navigation_properties[p], {}]}]
         rescue ActiveRecord::RecordInvalid => invalid
           return handle_exception(convert_ar_errors_to_metadata_errors(invalid.record.errors.messages), 400)
         rescue ActiveRecord::RecordNotUnique => invalid
           return handle_exception(convert_ar_errors_to_metadata_errors(invalid.record.errors.messages), 409)
+        rescue => e
+          Rails.logger.error(e)
+          return handle_exception("cannot create #{@entity_type.name}", 500)
         end
       elsif request.request_method == 'DELETE'
         return handle_exception("cannot delete multiple #{@entity_type.name}", 400) if @countable
