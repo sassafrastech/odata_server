@@ -138,6 +138,8 @@ class ODataController < OData.parent_controller.constantize
         return head 404 if !@countable && @results.empty?
       end
 
+      @results = @entity_type.collection_filter.output_proc.call(@results)
+
       respond_to do |format|
         format.atom # resource.atom.builder
         format.json # resource.json.erb

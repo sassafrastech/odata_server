@@ -16,7 +16,7 @@ module OData
         active_record.primary_key
       end
 
-      attr_reader :active_record, :scope, :entity_set
+      attr_reader :active_record, :scope, :entity_set, :collection_filter
 
       def initialize(schema, active_record, options = {})
         super(schema, self.class.name_for(active_record))
@@ -27,6 +27,13 @@ module OData
 
         @constructor = options[:constructor] || Proc.new{|hash| @active_record.new(hash)}
         @destructor = options[:destructor] || Proc.new{|one| one.destroy if one.respond_to?(:destroy)}
+
+        @collection_filter = options[:collection_filter] || begin
+          noop_filter = Config::CollectionFilterConfig.new
+          noop_filter.input Proc.new{|list| list}
+          noop_filter.output Proc.new{|list| list}
+          noop_filter
+        end
 
         @scope = options[:scope]
 
@@ -165,7 +172,8 @@ module OData
           if incoming_data.include?(assocation_name) && child_entity_type.present?
             expanded_properties << assocation_name
             if odata_association_metadata.association.multiple?
-              incoming_data[assocation_name].each do |incoming_child_data|
+              collection = child_entity_type.collection_filter.input_proc.call(incoming_data[assocation_name])
+              collection.each do |incoming_child_data|
                 #TODO make expanded_properties recursive
                 new_child_entity = child_entity_type.create_one(incoming_child_data)
                 proxy = new_entity.send("#{odata_association_metadata.association.reflection.name}")

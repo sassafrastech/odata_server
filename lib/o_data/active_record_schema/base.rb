@@ -1,7 +1,16 @@
 module OData
   module ActiveRecordSchema
     class Config
-      attr_reader :reflection, :included_fields, :constructor, :scope, :destructor, :composite_key
+      class CollectionFilterConfig
+        attr_reader :input_proc, :output_proc
+        def input(proc)
+          @input_proc = proc
+        end
+        def output(proc)
+          @output_proc = proc
+        end
+      end
+      attr_reader :reflection, :included_fields, :constructor, :scope, :destructor, :composite_key, :collection_filter
       def reflection(val = true)
         @reflection = val
       end
@@ -26,6 +35,10 @@ module OData
       end
       def composite_key(*fields)
         @composite_key = fields
+      end
+      def collection_filter(&block)
+        @collection_filter = CollectionFilterConfig.new
+        @collection_filter.instance_eval(&block) if block
       end
     end
     class Base < OData::AbstractSchema::Base
