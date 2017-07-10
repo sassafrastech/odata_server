@@ -69,9 +69,13 @@ module OData
 
         active_record = key.to_s.classify.constantize
 
-        schema_config = OData::Edm::DataServices.get_schema(:ar, OData::ActiveRecordSchema::Base)
-        config_hash = config.instance_values.deep_symbolize_keys
-        schema_config.EntityType(active_record, config_hash.reject{|k,v| k == :reflection}.merge({reflect_on_associations: config_hash[:reflection]}))
+        if active_record.table_exists?
+          schema_config = OData::Edm::DataServices.get_schema(:ar, OData::ActiveRecordSchema::Base)
+          config_hash = config.instance_values.deep_symbolize_keys
+          schema_config.EntityType(active_record, config_hash.reject{|k,v| k == :reflection}.merge({reflect_on_associations: config_hash[:reflection]}))
+        else
+          # TODO warn or something.  this check intended to prevent errors in rake db:migrate for a new odata model, but should fail else
+        end
       end
 
       def find_entity_type(klass)
