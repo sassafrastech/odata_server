@@ -32,7 +32,8 @@ class ODataController < ApplicationController
 
   def service
     respond_to do |format|
-      format.xml  # service.xml.builder
+      # format.xml  # service.xml.builder
+      format.xml  { render xml: xml_tags }
       format.json { render :json => @@data_services.to_json }
     end
   end
@@ -118,11 +119,33 @@ class ODataController < ApplicationController
   end
 
   private
+  def xml_tags
+    require 'builder'
+    xml = Builder::XmlMarkup.new
+    xml.instruct!
+    xml.tag!(:service, 'xmlns:atom': 'http://www.w3.org/2005/Atom' , \
+                       'xmlns': 'http://www.w3.org/2007/app', \
+                       'xml:base': o_data_engine.service_url, \
+                       'xmlns:metadata': 'http://docs.oasis-open.org/odata/ns/metadata', \
+                       'metadata:context': '$metadata') do
+      @@data_services.schemas.each do |schema|
+    	  xml.tag!(:workspace) do
+    	    xml.atom(:title, schema.namespace, type: :text)
+    	    schema.entity_types.collect(&:plural_name).sort.each do |plural_name|
+            next if plural_name.include?('HABTM')
+    	      xml.tag!(:collection, :href => plural_name) do
+    	        xml.atom(:title, plural_name)
+    	      end
+    	    end
+    	  end
+      end
+    end
+  end
 
   def extract_resource_path_and_query_string
     @resource_path = params[:path]
 
-    @query_string = params.inject({}) { |acc, pair|
+    @query_string = params.permit!.to_h.inject({}) { |acc, pair|
       key, value = pair
       acc[key.to_sym] = value unless [@resource_path, :controller, :action].include?(key.to_sym)
       acc
