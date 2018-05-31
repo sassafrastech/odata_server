@@ -57,3 +57,25 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
+
+## Test entity
+module Test
+  class Foo
+    attr_reader :foo, :bar, :baz
+
+    def initialize(foo, bar, baz)
+      @foo = foo
+      @bar = bar
+      @baz = baz
+    end
+  end
+
+  class Foo2
+    attr_reader :foo2, :bar2, :baz2
+  end
+
+  class Empty
+    # empty on purpose
+  end
+
+end
