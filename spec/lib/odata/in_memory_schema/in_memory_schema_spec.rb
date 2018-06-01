@@ -4,16 +4,19 @@ describe Odata::InMemorySchema::Base do
 
   context "initialize" do
 
-    xit "creates a new schema without entities in the Odata namespace by default" do
-
+    it "creates a new schema without entities in the Odata namespace by default" do
+      schema = Odata::InMemorySchema::Base.new
+      expect(schema.namespace).to eq("Odata")
     end
 
-    xit "a namespace argument" do
-
+    it "a namespace argument" do
+      schema = Odata::InMemorySchema::Base.new("TestNamespace")
+      expect(schema.namespace).to eq("TestNamespace")
     end
 
-    xit "registers entities passed via the :classes option" do
-
+    it "registers entity types passed via the :classes option" do
+      schema = Odata::InMemorySchema::Base.new("TestNamespace", classes: [Test::Foo, Test::Foo2])
+      expect(schema.entity_types.map(&:name)).to contain_exactly("Foo", "Foo2")
     end
   end
 

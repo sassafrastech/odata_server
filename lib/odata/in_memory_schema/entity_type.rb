@@ -43,21 +43,21 @@ module Odata
       def find_all(key_values = {}, options = nil)
         @entities
       end
-      
+
       def find_one(key_value)
         return nil if @key_property.blank?
         find_all.detect { |e| @key_property.value_for(e) == key_value}
       end
-      
+
       def exists?(key_value)
         !!find_one(key_value)
       end
-      
+
       def primary_key_for(one)
         return nil if @key_property.blank?
         @key_property.value_for(one)
       end
-      
+
       def inspect
         "#<< #{qualified_name.to_s}(#{[@properties, @navigation_properties].flatten.collect { |p| "#{p.name.to_s}: #{p.return_type.to_s}" }.join(', ')}) >>"
       end
