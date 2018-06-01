@@ -46,7 +46,7 @@ module Odata
       
       def find_one(key_value)
         return nil if @key_property.blank?
-        find_all(@key_property => key_value).first
+        find_all.detect { |e| @key_property.value_for(e) == key_value}
       end
       
       def exists?(key_value)

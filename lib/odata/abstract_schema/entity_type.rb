@@ -13,7 +13,7 @@ module Odata
 
         @navigation_properties = []
       end
-      
+
       attr_reader :key_property
 
       def key_property=(property)
@@ -33,7 +33,7 @@ module Odata
         @navigation_properties << navigation_property
         navigation_property
       end
-      
+
       def find_property(property_name)
         property = @properties.find { |p| p.name == property_name }
       end
@@ -41,16 +41,16 @@ module Odata
       def find_all(key_values = {}, options = nil)
         []
       end
-      
+
       def find_one(key_value)
         return nil if @key_property.blank?
         find_all(@key_property => key_value).first
       end
-      
+
       def exists?(key_value)
         !!find_one(key_value)
       end
-      
+
       def href_for(one)
         @name + '(' + primary_key_for(one).to_s + ')'
       end
@@ -59,12 +59,12 @@ module Odata
         return nil if @key_property.blank?
         @key_property.value_for(one)
       end
-      
+
       def inspect
         "#<< #{qualified_name.to_s}(#{[@properties, @navigation_properties].flatten.collect { |p| "#{p.name.to_s}: #{p.return_type.to_s}" }.join(', ')}) >>"
       end
-      
-      def filter(results, filter) 
+
+      def filter(results, filter)
         results.collect do |entity|
           filter.apply(self, entity)
         end.compact

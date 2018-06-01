@@ -10,12 +10,18 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+/spec/dummy/db/*.sqlite3
+/spec/dummy/db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+/spec/dummy/log/*
+/spec/dummy/tmp/*
+!/spec/dummy/log/.keep
+!/spec/dummy/tmp/.keep
 
 # Ignore Byebug command history file.
 .byebug_history
