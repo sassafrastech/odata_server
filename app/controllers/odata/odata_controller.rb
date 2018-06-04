@@ -36,7 +36,6 @@ module Odata
     def service
       respond_to do |format|
         format.xml  # service.xml.builder
-        #format.xml  { render xml: xml_tags }
         format.json { render :json => @@data_services.to_json }
       end
     end
