@@ -99,3 +99,10 @@ uses this gem.
 * Update the core for OData v4
 * Add support for `$search` option
 * Update and add more tests
+
+## Development
+
+To develop odata_server itself:
+
+1. Install bundler v1: `gem install bundler -v "~> 1.0"`
+1. Bundle using bundler v1: `bundle _1.17.3_`
