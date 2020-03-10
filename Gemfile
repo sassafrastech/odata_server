@@ -1,10 +1,12 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 gemspec
 
 group :development do
-  gem "bundler", ">= 1.0.0"
-  gem "jeweler", ">= 1.5.2"
+  gem "jeweler", "~> 2.1"
 end
 
-gem "byebug"
+group :development, :test do
+  gem "rspec-rails", "~> 3.9"
+  gem "pry-byebug", "~> 3.8"
+end
