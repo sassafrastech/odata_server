@@ -5,11 +5,11 @@ module OData
         def self.option_name
           '$format'
         end
-        
+
         def self.valid_values
           %w{atom json}
         end
-        
+
         def self.applies_to?(query)
           true
         end

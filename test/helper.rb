@@ -17,7 +17,7 @@ require 'odata_server'
 module Test
   class Foo
     attr_reader :foo, :bar, :baz
-    
+
     def initialize(foo, bar, baz)
       @foo = foo
       @bar = bar

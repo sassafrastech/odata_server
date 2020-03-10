@@ -15,7 +15,7 @@ class TestQuery < Minitest::Test
     foo_entities << Test::Foo.new("1", "2", "3")
     assert_equal(2, @schema.find_entity_type(Test::Foo).entities.length)
   end
-  
+
   def test_query_all
     assert_equal(2, @schema.find_entity_type(Test::Foo).entities.length)
     query = @parser.parse! "Foo"

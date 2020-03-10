@@ -5,13 +5,13 @@ module OData
         base.send(:extend, SingletonMethods)
         base.send(:include, InstanceMethods)
       end
-      
+
       module SingletonMethods
         def countable?
           false
         end
       end
-      
+
       module InstanceMethods
         def countable?
           self.class.countable?

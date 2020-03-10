@@ -9,7 +9,7 @@ module OData
         def initialize(query, key, value = nil)
           super(query, key, value)
         end
-        
+
         def self.applies_to?(query)
           return false if query.segments.empty?
           return false unless query.segments.last.respond_to?(:countable?)
@@ -18,7 +18,7 @@ module OData
 
         def self.parse!(query, key, value = nil)
           return nil unless key == self.option_name
-          
+
           query.Option(self, key, value.to_i)
         end
 

@@ -47,16 +47,16 @@ module OData
           results
         end
       end
-      
+
       def find_one(key_value)
         return nil if @key_property.blank?
         find_all(key_property.name.underscore => key_value).first
       end
-      
+
       def exists?(key_value)
         !!find_one(key_value)
       end
-      
+
       def primary_key_for(one)
         return nil if @key_property.blank?
         @key_property.value_for(one)

@@ -13,7 +13,7 @@ module OData
         def initialize(query, key, value = nil)
           super(query, key, value)
         end
-        
+
         # def self.applies_to?(query)
         #   false
         # end
@@ -21,7 +21,7 @@ module OData
         def self.parse!(query, key, value = nil)
           return nil unless key == self.option_name
           return nil if valid_values.empty?
-          
+
           if value.blank?
             query.Option(self, key, valid_values.first)
           else

@@ -12,14 +12,14 @@ class TestInMemorySchema < Minitest::Test
     schema.register(Test::Foo)
     assert_equal("Foo", schema.entity_types[0].name)
   end
-  
+
   def test_find_entity_type_ignores_module
     schema = OData::InMemorySchema::Base.new
     schema.register(Test::Foo)
     assert_equal("Foo", schema.find_entity_type("Foo").name)
     assert_equal("Foo", schema.find_entity_type(Test::Foo).name)
   end
-  
+
   def test_find_entities
     schema = OData::InMemorySchema::Base.new(Test::Foo)
     schema.register(Test::Foo)
@@ -28,7 +28,7 @@ class TestInMemorySchema < Minitest::Test
     end
     assert_equal(20, schema.find_entity_type("Foo").entities.size)
   end
-  
+
   def test_can_set_key_property
     schema = OData::InMemorySchema::Base.new(Test::Foo)
     schema.register(Test::Foo, :baz)
@@ -39,7 +39,7 @@ class TestInMemorySchema < Minitest::Test
     et = schema.find_entity_type(Test::Foo)
     assert_equal("Bar", et.key_property.name)
   end
-  
+
   # set up a Foo object with the "bar" property as the key
   # the href for the instance should be constructed correctly
   # http://www.odata.org/documentation/odata-v3-documentation/url-conventions/

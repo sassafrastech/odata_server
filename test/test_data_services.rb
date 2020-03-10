@@ -1,11 +1,11 @@
 require 'helper'
 
 class Foo
-  attr_reader :foo, :bar, :baz  
+  attr_reader :foo, :bar, :baz
 end
 
 class Bar
-  attr_reader :foo2, :bar2, :baz2  
+  attr_reader :foo2, :bar2, :baz2
 end
 
 class Baz
