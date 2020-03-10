@@ -1,27 +1,27 @@
 require "rails_helper"
 
-describe Odata::InMemorySchema::Base do
+describe OData::InMemorySchema::Base do
 
   context "initialize" do
 
-    it "creates a new schema without entities in the Odata namespace by default" do
-      schema = Odata::InMemorySchema::Base.new
-      expect(schema.namespace).to eq("Odata")
+    it "creates a new schema without entities in the OData namespace by default" do
+      schema = OData::InMemorySchema::Base.new
+      expect(schema.namespace).to eq("OData")
     end
 
     it "a namespace argument" do
-      schema = Odata::InMemorySchema::Base.new("TestNamespace")
+      schema = OData::InMemorySchema::Base.new("TestNamespace")
       expect(schema.namespace).to eq("TestNamespace")
     end
 
     it "registers entity types passed via the :classes option" do
-      schema = Odata::InMemorySchema::Base.new("TestNamespace", classes: [Test::Foo, Test::Foo2])
+      schema = OData::InMemorySchema::Base.new("TestNamespace", classes: [Test::Foo, Test::Foo2])
       expect(schema.entity_types.map(&:name)).to contain_exactly("Foo", "Foo2")
     end
   end
 
   context "register" do
-    let(:schema) { Odata::InMemorySchema::Base.new }
+    let(:schema) { OData::InMemorySchema::Base.new }
     it "can register and entity type" do
       schema.register(Test::Foo)
       expect(schema.entity_types.size).to eq(1)
@@ -44,7 +44,7 @@ describe Odata::InMemorySchema::Base do
   end
 
   context "find_entites" do
-    let(:schema) { Odata::InMemorySchema::Base.new }
+    let(:schema) { OData::InMemorySchema::Base.new }
     it "accepts classes or class names, ignororing the module part" do
       schema.register(Test::Foo)
       expect(schema.find_entity_type("Foo").name).to eq("Foo")

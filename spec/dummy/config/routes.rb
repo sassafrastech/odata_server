@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount Odata::Engine => "/odata"
+  mount OData::Engine => "/odata"
 end

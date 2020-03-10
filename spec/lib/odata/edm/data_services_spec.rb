@@ -1,15 +1,15 @@
 require "rails_helper"
 
-describe Odata::Edm::DataServices do
+describe OData::Edm::DataServices do
 
   let(:schemas) do
-    inmemory1 = Odata::InMemorySchema::Base.new
+    inmemory1 = OData::InMemorySchema::Base.new
     inmemory1.register(Test::Foo)
-    inmemory2 = Odata::InMemorySchema::Base.new
+    inmemory2 = OData::InMemorySchema::Base.new
     inmemory2.register(Test::Foo2)
     [inmemory1, inmemory2]
   end
-  let(:ds) { Odata::Edm::DataServices.new(schemas) }
+  let(:ds) { OData::Edm::DataServices.new(schemas) }
 
   context "initialize" do
     it "adds all classes in the schemas to the service" do
