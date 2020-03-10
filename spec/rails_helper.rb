@@ -63,10 +63,21 @@ module Test
   class Foo
     attr_reader :foo, :bar, :baz
 
+    @@instances = []
+
     def initialize(foo, bar, baz)
       @foo = foo
       @bar = bar
       @baz = baz
+      @@instances << self
+    end
+
+    def self.clear
+      @@instances.clear
+    end
+
+    def self.all
+      @@instances
     end
   end
 
