@@ -104,5 +104,11 @@ uses this gem.
 
 To develop odata_server itself:
 
+### Setup
+
 1. Install bundler v1: `gem install bundler -v "~> 1.0"`
 1. Bundle using bundler v1: `bundle _1.17.3_`
+
+### Testing
+
+1. Run specs: `bundle exec rake test`
