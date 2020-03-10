@@ -24,7 +24,7 @@ module OData
           @key_property ||= object_id_property
         end
         @navigation_properties = []
-        @klass = schema.classes.find { |c| c.to_s.match(name) }
+        @klass = schema.classes.find { |c| c.to_s.match(name) } || cls
       end
 
       def Property(*args)
