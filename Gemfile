@@ -8,5 +8,7 @@ end
 
 group :development, :test do
   gem "rspec-rails", "~> 3.9"
+  gem "capybara", "~> 2.18"
+  gem "sqlite3", "~> 1.4"
   gem "pry-byebug", "~> 3.8"
 end
