@@ -76,7 +76,7 @@ describe OData::Core::Options::FilterOption do
       entity_type.key_property = bar
       entity_type
     end
-    let(:query) { entity_type; OData::Core::Parser.new(ds).parse!("Foos") }
+    let(:query) { entity_type; OData::Core::Parser.new(ds).parse!({ path: "Foos" }) }
 
     context "find_filter" do
       it "correctly finds the filter for a property" do
@@ -106,15 +106,19 @@ describe OData::Core::Options::FilterOption do
 
     context "apply_filter" do
       it "correctly filters out properties excluded by the filter" do
-        filter = "bar add 5 eq 8 or baz eq 3"
+        filter = "Bar add 5 eq 8 or Baz eq 3"
         filter_option = OData::Core::Options::FilterOption.new(query, filter)
-        expect(filter_option.filter.value).to eq(:eq)
-        expect(filter_option.filter.right.value).to eq(:or)
-        expect(filter_option.filter.right.left.value).to eq('8')
-        expect(filter_option.filter.right.right.value).to eq(:eq)
+        expect(filter_option.filter.value).to eq(:or)
+        expect(filter_option.filter.left.value).to eq(:eq)
+        expect(filter_option.filter.left.left.value).to eq(:add)
+        expect(filter_option.filter.left.right.value).to eq('8')
+        expect(filter_option.filter.right.value).to eq(:eq)
         entity = Test::Foo.new(1, 2, 4)
         res = filter_option.apply(entity_type, entity)
         expect(res).to be_falsey
+        entity = Test::Foo.new(1, 2, 3)
+        res = filter_option.apply(entity_type, entity)
+        expect(res).to be_truthy
         entity = Test::Foo.new(1, 3, 4)
         res = filter_option.apply(entity_type, entity)
         expect(res).to be_truthy

@@ -8,7 +8,7 @@ module OData
         @data_services = data_services
       end
 
-      def parse!(params, query_params)
+      def parse!(params, query_params = {})
         query = OData::Core::Query.new(data_services)
         resource_path_components = params[:path].split('/')
         query_string_components = query_params.except(:path)
@@ -36,7 +36,7 @@ module OData
             end
           end
         end
-        
+
         raise Errors::ParseQuerySegmentException.new(query, resource_path_component)
       end
 
@@ -44,7 +44,7 @@ module OData
         if md = key.match(/^\$(.*?)$/)
           raise Errors::InvalidReservedOptionName.new(query, key, value) unless @@reserved_option_names.include?(md[1])
         end
-        
+
         if md = value.match(/^'\s*([^']+)\s*'$/)
           value = md[1]
         end
@@ -56,7 +56,7 @@ module OData
             end
           end
         end
-        
+
         # basic (or "custom") option
         query.Option(BasicOption, key, value)
       end
