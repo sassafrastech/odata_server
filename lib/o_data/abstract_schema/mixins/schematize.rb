@@ -25,6 +25,7 @@ module OData
         end
 
         def plural_name
+          # TODO: Pluralize base name, not suffix.
           name.pluralize
         end
 

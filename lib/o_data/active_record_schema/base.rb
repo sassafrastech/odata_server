@@ -7,6 +7,7 @@ module OData
         super(namespace)
         @classes = Array(options[:classes])
         @reflection = options[:reflection] || false
+        group_by_form = options[:group_by_form] || false
 
         if classes.any?
           path = classes.map { |klass| Rails.root.to_s + "/app/models/#{klass}.rb" }
@@ -20,8 +21,16 @@ module OData
 
         Dir.glob(path).each { |file| require file }
 
-        models.map do |active_record|
-          self.EntityType(active_record, reflect_on_associations: reflection)
+        models.each do |active_record|
+          if group_by_form
+            # TODO: Clean this up and make more efficient.
+            forms = Response.distinct.pluck(:form_id).map { |id| ({id: id, name: Form.find(id).name}) }
+            forms.each do |id:, name:|
+              add_entity_type(active_record, where: {form_id: id}, suffix: name, reflect_on_associations: reflection)
+            end
+          else
+            add_entity_type(active_record, reflect_on_associations: reflection)
+          end
         end
       end
 
@@ -29,10 +38,9 @@ module OData
         entity_types[EntityType.name_for(klass)]
       end
 
-      def EntityType(*args)
+      def add_entity_type(*args)
         entity_type = EntityType.new(self, *args)
         @entity_types[entity_type.name] = entity_type
-        entity_type
       end
     end
   end
