@@ -23,7 +23,7 @@ module ResourceJsonRendererHelper
       _json[key] = property.value_for(result)
     end
 
-    Hash[entity_type.navigation_properties.sort].values.select(&:parter).each do |navigation_property|
+    Hash[entity_type.navigation_properties.sort].values.select(&:partner).each do |navigation_property|
       _json[navigation_property.name.to_s] = begin
         if options[:expand] && options[:expand].keys.include?(navigation_property)
           expand = options[:expand][navigation_property]
