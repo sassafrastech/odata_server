@@ -70,7 +70,7 @@ module ResourceXmlRendererHelper
 
       xml.tag!(:link, rel: 'self', title: result_title, href: result_href) unless result_title.blank? || result_href.blank?
 
-      Hash[entity_type.navigation_properties.sort].values.select(&:parter).each do |navigation_property|
+      Hash[entity_type.navigation_properties.sort].values.select(&:partner).each do |navigation_property|
         navigation_property_href = "#{result_href}/#{navigation_property.partner}"
         related_attrs = { rel: "http://docs.oasis-open.org/odata/ns/related/#{navigation_property.partner}",
                           type: "application/atom+xml;type=#{navigation_property.association.multiple? ? 'feed' : 'entry'}",
