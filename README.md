@@ -1,5 +1,12 @@
 # OData Server
 
+:warning: If you are not Sassafras, you're probably using the wrong branch.
+Try [`rails_5`](https://github.com/sassafrastech/odata_server/tree/rails_5) instead.
+
+The below README may not reflect the current state.
+
+---
+
 This is a rails plugin/engine to embue your application with OData features (so its data can be readily
 consumed by an OData client).
 
