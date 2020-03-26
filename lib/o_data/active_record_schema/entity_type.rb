@@ -35,6 +35,7 @@ module OData
           end
         end
 
+        # Things like updated_at
         OData::AbstractSchema::Mixins::Serializable.atom_element_names.each do |atom_element_name|
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
 
