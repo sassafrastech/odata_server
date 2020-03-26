@@ -7,6 +7,8 @@ module OData
       include Mixins::Serializable::EntityTypeInstanceMethods
       include Mixins::OptionTranslator
 
+      ColumnAdapter = Struct.new(:name, :type, :null)
+
       def self.name_for(active_record_or_str)
         name = active_record_or_str.is_a?(ActiveRecord::Base) ? active_record_or_str.name : active_record_or_str.to_s
         name.gsub('::', '')
@@ -35,6 +37,12 @@ module OData
           end
         end
 
+        # Add answers schema too
+        answers = @active_record.first&.answers
+        answers&.each_with_index do |answer, index|
+          self.AnswerProperty(ColumnAdapter.new(answer.questioning.code, answers.columns_hash["value"].type, false), index)
+        end
+
         # Things like updated_at
         OData::AbstractSchema::Mixins::Serializable.atom_element_names.each do |atom_element_name|
           o_data_entity_type_property_name = :"atom_#{atom_element_name}_property"
@@ -55,6 +63,14 @@ module OData
       end
 
       def Property(*args)
+        property = Property.new(self, *args)
+        if ["Id", "Shortcode"].include?(property.name)
+          @properties[property.name] = property
+        end
+        property
+      end
+
+      def AnswerProperty(*args)
         property = Property.new(self, *args)
         @properties[property.name] = property
         property

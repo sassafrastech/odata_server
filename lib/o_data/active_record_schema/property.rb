@@ -17,12 +17,13 @@ module OData
         :time      => 'Edm.TimeOfDay'
       }.freeze
 
-      attr_reader :column_adapter
+      attr_reader :column_adapter, :answer_index
 
-      def initialize(entity_type, column_adapter)
+      def initialize(entity_type, column_adapter, answer_index = -1)
         super(entity_type, self.class.name_for(column_adapter), self.class.return_type_for(column_adapter), self.class.nullable?(column_adapter))
 
         @column_adapter = column_adapter
+        @answer_index = answer_index
       end
 
       def self.return_type_for(column_adapter)
@@ -38,7 +39,11 @@ module OData
       end
 
       def value_for(one)
-        v = one.send(@column_adapter.name.to_sym)
+        v = if answer_index >= 0
+              one.answers[answer_index].value
+            else
+              one.send(@column_adapter.name.to_sym)
+            end
         return v.to_f if return_type == 'Edm.Decimal' && !v.nil?
         return v.iso8601 if v.respond_to?(:iso8601)
         v
