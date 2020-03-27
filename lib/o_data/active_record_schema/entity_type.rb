@@ -37,10 +37,19 @@ module OData
           end
         end
 
-        # Add answers schema too
-        answers = @active_record.first&.answers
-        answers&.each_with_index do |answer, index|
-          self.AnswerProperty(ColumnAdapter.new(answer.questioning.code, answers.columns_hash["value"].type, false), index)
+        # TODO: recursively add entity types for repeat groups
+        # TODO: Use Association?
+        form = @active_record.first&.form
+        form.c.each do |child|
+          case child.type
+          when 'Questioning'
+            answers = child.answers
+            answers.each_with_index do |answer, index|
+              self.AnswerProperty(ColumnAdapter.new(answer.questioning.code, answers.columns_hash["value"].type, false), index)
+            end
+          when 'QingGroup'
+            # add_another(QingGroup, where: {form_id: form.id}, suffix: name, reflect_on_associations: reflection)
+          end
         end
 
         # Things like updated_at
@@ -55,9 +64,10 @@ module OData
           end
         end
 
-        if options[:reflect_on_associations]
+        if true || options[:reflect_on_associations]
           @active_record.reflect_on_all_associations.each do |reflection|
-            self.NavigationProperty(reflection)
+            # This would create an Association (the only thing that renders Collection)
+            self.NavigationProperty(reflection) if reflection.plural_name == "answers"
           end
         end
       end

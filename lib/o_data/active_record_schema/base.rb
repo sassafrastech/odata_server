@@ -38,6 +38,7 @@ module OData
         entity_types[EntityType.name_for(klass)]
       end
 
+      # TODO make a proc?
       def add_entity_type(*args)
         entity_type = EntityType.new(self, *args)
         @entity_types[entity_type.name] = entity_type

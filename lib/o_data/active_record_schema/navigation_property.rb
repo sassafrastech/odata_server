@@ -25,6 +25,7 @@ module OData
       end
 
       def Association(*args)
+        # TODO: Will this handle repeat groups for us?
         self.association = Association.new(self, *args)
       end
 
