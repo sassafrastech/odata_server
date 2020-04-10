@@ -28,11 +28,12 @@ class ODataController < ApplicationController
     respond_to do |format|
       format.xml  # service.xml.builder
       format.json do
+        schema = @@data_services.schemas.first
         json = {
           "@odata.context" => o_data_engine.metadata_url,
           value: @@data_services.to_json
         }
-        render json: json
+        render json: schema.transform_json_for_root(json)
       end
     end
   end
