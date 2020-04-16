@@ -7,6 +7,9 @@ module OData
         super(namespace)
         @classes = Array(options[:classes])
         @reflection = options[:reflection] || false
+
+        # Hooks.
+        # See spec/requests/ for examples of how these can be used.
         @transform_json_for_root = options[:transform_json_for_root] || nil
         @transform_schema_for_metadata = options[:transform_schema_for_metadata] || nil
         @transform_json_for_resource_feed = options[:transform_json_for_resource_feed] || nil
@@ -40,19 +43,19 @@ module OData
       end
 
       def transform_json_for_root(json)
-        @transform_json_for_root ? @transform_json_for_root.call(json) : json
+        @transform_json_for_root&.call(json) || json
       end
 
       def transformed_for_metadata
-        @transform_schema_for_metadata ? @transform_schema_for_metadata.call(self) : self
+        @transform_schema_for_metadata&.call(self) || self
       end
 
       def transform_json_for_resource_feed(json)
-        @transform_json_for_resource_feed ? @transform_json_for_resource_feed.call(json) : json
+        @transform_json_for_resource_feed&.call(json) || json
       end
 
       def transform_json_for_resource_entry(json)
-        @transform_json_for_resource_entry ? @transform_json_for_resource_entry.call(json) : json
+        @transform_json_for_resource_entry&.call(json) || json
       end
     end
   end
