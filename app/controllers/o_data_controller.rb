@@ -11,6 +11,7 @@ class ODataController < ApplicationController
   rescue_from OData::ODataException, :with => :handle_exception
   rescue_from ActiveRecord::RecordNotFound, :with => :handle_exception
 
+  # Don't need to worry about CSRF since it's an API
   skip_before_action :verify_authenticity_token, only: :options
 
   # This action needs to register before the others.
