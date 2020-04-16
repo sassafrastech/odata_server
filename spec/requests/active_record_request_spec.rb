@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe OData::ActiveRecordSchema::Base do
   context "render" do
+    let(:root) { "/odata" }
     let(:options) { {} }
     let(:schema) { OData::ActiveRecordSchema::Base.new("Test", classes: [ActiveFoo, ActiveBar], **options) }
 
@@ -20,7 +21,7 @@ describe OData::ActiveRecordSchema::Base do
     end
 
     context "root" do
-      let(:path) { "/odata" }
+      let(:path) { root }
 
       it "renders as expected" do
         expect_output({
@@ -54,5 +55,43 @@ describe OData::ActiveRecordSchema::Base do
         end
       end
     end
+
+    context "$metadata" do
+      let(:path) { "#{root}/$metadata" }
+
+      it "renders as expected" do
+        expect_output(file_fixture("metadata_basic.xml").read)
+      end
+
+      context "with hook" do
+        let(:options) do
+          {
+            transform_schema_for_metadata: lambda do |schema|
+              schema.namespace = "Test2"
+              schema.entity_types["ActiveFoo"].properties["Name"] = SimpleProperty.new("Name")
+              schema
+            end
+          }
+        end
+
+        it "renders as expected" do
+          expect_output(file_fixture("metadata_after_hook.xml").read)
+        end
+      end
+    end
+  end
+end
+
+# This can be used instead of Property, e.g. for rendering $metadata.
+class SimpleProperty
+  attr_reader :name, :return_type
+
+  def initialize(name)
+    @name = name
+    @return_type = :TestType
+  end
+
+  def nullable?
+    true
   end
 end
