@@ -7,11 +7,13 @@ describe OData::ActiveRecordSchema::Base do
     let(:schema) { OData::ActiveRecordSchema::Base.new("Test", classes: [ActiveFoo, ActiveBar], **options) }
 
     before do
+      Timecop.freeze("2020-01-01T12:00Z")
       ODataController.data_services.append_schemas([schema])
     end
 
     after do
       ODataController.data_services.clear_schemas
+      Timecop.return
     end
 
     def expect_output(expected)
