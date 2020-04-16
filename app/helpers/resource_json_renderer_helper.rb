@@ -9,6 +9,7 @@ module ResourceJsonRendererHelper
       json['@odata.count'] = results.size
     end
 
+    # Once per entity type (ResponseFoo)
     json[:value] = results.collect { |result| o_data_json_entry(query, result, entity_type, options) }
     entity_type.schema.transformers[:feed].call(json)
   end
@@ -19,6 +20,8 @@ module ResourceJsonRendererHelper
     _json = {}
     _json["@odata.context"] = "#{o_data_engine.metadata_url}##{entity_type.plural_name}/$entity" if options[:context]
 
+    # entity_type is still ResponseFoo
+    # entity_type.schema.classes[0] == Response
     get_selected_properties_for(query, entity_type).each do |key, property|
       _json[key] = property.value_for(result)
     end
