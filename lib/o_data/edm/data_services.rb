@@ -12,6 +12,11 @@ module OData
         append_schemas(schemas.dup || [])
       end
 
+      def clear_schemas
+        @entity_types.clear
+        @schemas.clear
+      end
+
       def append_schemas(schemas)
         @schemas.concat(schemas)
         schemas.each do |schema|
