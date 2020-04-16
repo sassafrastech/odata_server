@@ -11,6 +11,12 @@ class ODataController < ApplicationController
   rescue_from OData::ODataException, :with => :handle_exception
   rescue_from ActiveRecord::RecordNotFound, :with => :handle_exception
 
+  # TODO: Temporary
+  # Add authentication code for API tokens on permitted routes
+  # (because this inherits from AppController so we can do it in NEMO)
+  # We'll need a hook for cancancan maybe. Respect allowed_scopes (e.g. observers can only see their own thing)
+  # Look at cancan docs
+  skip_authorization_check
   skip_before_action :verify_authenticity_token, only: :options
 
   # This action needs to register before the others.
