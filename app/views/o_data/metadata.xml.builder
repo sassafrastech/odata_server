@@ -1,4 +1,11 @@
 xml.instruct!
+
+# Use these methods to stub out xml rendering if you want to use breakpoints.
+# Otherwise, breakpoints will CRASH due to 'closed stream'.
+#
+# def xml.edmx(*args, &block) yield if block end
+# def xml.tag!(*args, &block) yield if block end
+
 xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odata/ns/edmx") do
   xml.edmx(:DataServices) do
 

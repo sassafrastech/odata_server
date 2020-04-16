@@ -1,6 +1,8 @@
 module ResourceRendererHelper
 
   def get_selected_properties_for(query, entity_type)
+    # Hmm, this logic seems incorrect? But it's fine for now.
+
     # $select option not supplied
     return entity_type.properties unless select_option = query.options[:$select]
 
