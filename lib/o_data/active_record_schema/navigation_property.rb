@@ -29,6 +29,7 @@ module OData
       end
 
       def partner
+        # TODO: This doesn't work for named relations, e.g. `belongs_to :reviewer, class_name: "User"`
         p = Object.const_get(name.camelize).reflections[entity_type.name.to_sym]
         p.name.camelize if p
       end
