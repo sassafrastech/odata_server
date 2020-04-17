@@ -26,7 +26,9 @@ module OData
           end
         end
 
-        Dir.glob(path).each { |file| require file }
+        unless options[:skip_require]
+          Dir.glob(path).each { |file| require file }
+        end
 
         models.map do |active_record|
           self.EntityType(active_record, reflect_on_associations: reflection)
