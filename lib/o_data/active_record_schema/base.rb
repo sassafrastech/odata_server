@@ -30,8 +30,10 @@ module OData
           Dir.glob(path).each { |file| require file }
         end
 
-        models.map do |active_record|
-          self.EntityType(active_record, reflect_on_associations: reflection)
+        return if options[:skip_add_entity_types]
+
+        models.each do |active_record|
+          add_entity_type(active_record, reflect_on_associations: reflection)
         end
       end
 
@@ -39,10 +41,9 @@ module OData
         entity_types[EntityType.name_for(klass)]
       end
 
-      def EntityType(*args)
+      def add_entity_type(*args)
         entity_type = EntityType.new(self, *args)
         @entity_types[entity_type.name] = entity_type
-        entity_type
       end
     end
   end
