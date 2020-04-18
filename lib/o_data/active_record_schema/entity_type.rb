@@ -21,9 +21,9 @@ module OData
       def initialize(schema, active_record, options = {})
         super(schema, self.class.name_for(active_record))
 
-        options.reverse_merge!(:reflect_on_associations => true)
+        options.reverse_merge!(reflect_on_associations: true, where: {})
 
-        @active_record = active_record
+        @active_record = active_record.where(options[:where])
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
 
