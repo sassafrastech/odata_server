@@ -111,6 +111,8 @@ In addition to `:classes` and `:reflection`, you can use:
     - `:metadata`: Transform the schema before output to XML for `/$metadata`
     - `:feed`: Transform the JSON before output for a resource feed, e.g. `/Categories`
     - `:entry`: Transform the JSON before output for a resource entry, e.g. `/Categories(1)`
+- `:skip_require`: `true` if you want to skip automatically requiring each ActiveRecord class (for example if your app loads them itself)
+- `:skip_add_entity_types`: `true` if you want to skip automatically adding an EntityType for each ActiveRecord class (you must add them manually, which allows you to customize things like `:name` and `:where`)
 
 ## TODOS
 
