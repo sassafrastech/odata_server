@@ -3,7 +3,7 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
   xml.edmx(:DataServices) do
 
     ODataController.data_services.schemas.each do |schema|
-      schema = schema.transformed_for_metadata
+      schema = schema.transformers[:metadata].call(schema)
 
       xml.tag!(:Schema, Namespace: schema.namespace, xmlns: "http://docs.oasis-open.org/odata/ns/edm") do
 

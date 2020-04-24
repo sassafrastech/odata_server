@@ -102,6 +102,16 @@ Restart your sever and you can visit the `/service/Odata` url that is the servic
 See https://github.com/lmcalpin/odata_provider_example_rb for an example application that
 uses this gem.
 
+## Other options
+
+In addition to `:classes` and `:reflection`, you can use:
+
+- `:transformers`: Hash allowing the following data transformer hooks (ActiveRecord only for now):
+    - `:root`: Transform the JSON before output for `/`
+    - `:metadata`: Transform the schema before output to XML for `/$metadata`
+    - `:feed`: Transform the JSON before output for a resource feed, e.g. `/Categories`
+    - `:entry`: Transform the JSON before output for a resource entry, e.g. `/Categories(1)`
+
 ## TODOS
 
 * Update the core for OData v4

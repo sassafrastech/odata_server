@@ -10,7 +10,7 @@ module ResourceJsonRendererHelper
     end
 
     json[:value] = results.collect { |result| o_data_json_entry(query, result, entity_type, options) }
-    entity_type.schema.transform_json_for_resource_feed(json)
+    entity_type.schema.transformers[:feed].call(json)
   end
 
   def o_data_json_entry(query, result, entity_type, options = {})
@@ -39,7 +39,7 @@ module ResourceJsonRendererHelper
       end
     end
 
-    entity_type.schema.transform_json_for_resource_entry(_json)
+    entity_type.schema.transformers[:entry].call(_json)
   end
 
 end
