@@ -1,6 +1,7 @@
 module OData
   module Edm
     class DataServices
+      # Initial schemas that can be added statically.
       cattr_accessor :schemas
       @@schemas = []
 

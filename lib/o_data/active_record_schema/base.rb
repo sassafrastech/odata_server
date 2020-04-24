@@ -1,19 +1,20 @@
 module OData
   module ActiveRecordSchema
     class Base < OData::AbstractSchema::Base
-      attr_reader :classes, :reflection
+      attr_reader :classes, :reflection, :transformers
 
       def initialize(namespace = 'OData', options = {})
         super(namespace)
         @classes = Array(options[:classes])
         @reflection = options[:reflection] || false
-
-        # Hooks.
+        # Data transformer hooks.
         # See spec/requests/ for examples of how these can be used.
-        @transform_json_for_root = options[:transform_json_for_root] || nil
-        @transform_schema_for_metadata = options[:transform_schema_for_metadata] || nil
-        @transform_json_for_resource_feed = options[:transform_json_for_resource_feed] || nil
-        @transform_json_for_resource_entry = options[:transform_json_for_resource_entry] || nil
+        @transformers = options[:transformers] || {}
+        noop = ->(x) { x }
+        @transformers[:metadata] ||= noop
+        @transformers[:root] ||= noop
+        @transformers[:feed] ||= noop
+        @transformers[:entry] ||= noop
 
         if classes.any?
           path = classes.map { |klass| Rails.root.to_s + "/app/models/#{klass}.rb" }
@@ -40,22 +41,6 @@ module OData
         entity_type = EntityType.new(self, *args)
         @entity_types[entity_type.name] = entity_type
         entity_type
-      end
-
-      def transform_json_for_root(json)
-        @transform_json_for_root&.call(json) || json
-      end
-
-      def transformed_for_metadata
-        @transform_schema_for_metadata&.call(self) || self
-      end
-
-      def transform_json_for_resource_feed(json)
-        @transform_json_for_resource_feed&.call(json) || json
-      end
-
-      def transform_json_for_resource_entry(json)
-        @transform_json_for_resource_entry&.call(json) || json
       end
     end
   end

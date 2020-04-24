@@ -33,7 +33,7 @@ class ODataController < ApplicationController
           "@odata.context" => o_data_engine.metadata_url,
           value: @@data_services.to_json
         }
-        render json: schema.transform_json_for_root(json)
+        render json: schema.transformers[:root].call(json)
       end
     end
   end

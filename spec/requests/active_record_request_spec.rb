@@ -39,10 +39,12 @@ describe OData::ActiveRecordSchema::Base do
       context "with hook" do
         let(:options) do
           {
-            transform_json_for_root: lambda do |json|
-              json[:value].push({ name: "Fake data" })
-              json
-            end
+            transformers: {
+              root: lambda do |json|
+                json[:value].push({ name: "Fake data" })
+                json
+              end
+            }
           }
         end
 
@@ -69,11 +71,13 @@ describe OData::ActiveRecordSchema::Base do
       context "with hook" do
         let(:options) do
           {
-            transform_schema_for_metadata: lambda do |schema|
-              schema.namespace = "Test2"
-              schema.entity_types["ActiveFoo"].properties["Name"] = SimpleProperty.new("Name")
-              schema
-            end
+            transformers: {
+              metadata: lambda do |schema|
+                schema.namespace = "Test2"
+                schema.entity_types["ActiveFoo"].properties["Name"] = SimpleProperty.new("Name")
+                schema
+              end
+            }
           }
         end
 
@@ -105,10 +109,12 @@ describe OData::ActiveRecordSchema::Base do
       context "with feed hook" do
         let(:options) do
           {
-            transform_json_for_resource_feed: lambda do |json|
-              json[:value].push({ name: "Fake data" })
-              json
-            end
+            transformers: {
+              feed: lambda do |json|
+                json[:value].push({ name: "Fake data" })
+                json
+              end
+            }
           }
         end
 
@@ -127,10 +133,12 @@ describe OData::ActiveRecordSchema::Base do
       context "with entry hook" do
         let(:options) do
           {
-            transform_json_for_resource_entry: lambda do |json|
-              json["Name"] = "foo"
-              json
-            end
+            transformers: {
+              entry: lambda do |json|
+                json["Name"] = "foo"
+                json
+              end
+            }
           }
         end
 
