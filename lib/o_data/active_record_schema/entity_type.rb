@@ -19,11 +19,13 @@ module OData
       attr_reader :active_record
 
       def initialize(schema, active_record, options = {})
-        super(schema, self.class.name_for(active_record))
+        options.reverse_merge!(reflect_on_associations: true,
+                               name: self.class.name_for(active_record),
+                               where: {})
 
-        options.reverse_merge!(:reflect_on_associations => true)
+        super(schema, options[:name])
 
-        @active_record = active_record
+        @active_record = active_record.where(options[:where])
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
 

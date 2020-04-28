@@ -59,6 +59,35 @@ describe OData::ActiveRecordSchema::Base do
           }.to_json)
         end
       end
+
+      context "with custom EntityTypes" do
+        let(:options) do
+          { skip_add_entity_types: true }
+        end
+
+        it "renders without any EntityTypes" do
+          expect_output({
+            "@odata.context" => "http://www.example.com/odata/$metadata",
+            value: []
+          }.to_json)
+        end
+
+        it "renders with custom EntityTypes" do
+          schema.add_entity_type(ActiveFoo, name: "CustomFoo",
+                                            reflect_on_associations: false)
+          schema.add_entity_type(ActiveBar, name: "CustomBar",
+                                            reflect_on_associations: false)
+          refresh_schema(schema)
+
+          expect_output({
+            "@odata.context" => "http://www.example.com/odata/$metadata",
+            value: [
+              { name: "CustomFoos", kind: "EntitySet", url: "CustomFoos" },
+              { name: "CustomBars", kind: "EntitySet", url: "CustomBars" }
+            ]
+          }.to_json)
+        end
+      end
     end
 
     context "$metadata" do
@@ -152,8 +181,32 @@ describe OData::ActiveRecordSchema::Base do
           }.to_json)
         end
       end
+
+      context "with filtered EntityTypes" do
+        let(:options) do
+          { skip_add_entity_types: true }
+        end
+
+        it "renders with custom EntityTypes" do
+          schema.add_entity_type(ActiveFoo, where: { name: "test 1" },
+                                            reflect_on_associations: false)
+          refresh_schema(schema)
+
+          expect_output({
+            "@odata.context" => "http://www.example.com/odata/$metadata#ActiveFoos",
+            value: [
+              { Id: 1, Name: "test 1", CreatedAt: "2020-01-01T12:00:00Z", UpdatedAt: "2020-01-01T12:00:00Z" }
+            ]
+          }.to_json)
+        end
+      end
     end
   end
+end
+
+def refresh_schema(schema)
+  ODataController.data_services.clear_schemas
+  ODataController.data_services.append_schemas([schema])
 end
 
 # This can be used instead of Property, e.g. for rendering $metadata.
