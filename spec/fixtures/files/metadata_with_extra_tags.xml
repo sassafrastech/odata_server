@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="Test" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="ActiveBar">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String" Nullable="true"/>
+        <Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="UpdatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="ActiveFoo" BaseType="Test">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String" Nullable="true"/>
+        <Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="UpdatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+      </EntityType>
+      <EntityContainer Name="TestService">
+        <EntitySet Name="ActiveBars" EntityType="Test.ActiveBar">
+        </EntitySet>
+        <EntitySet Name="ActiveFoos" EntityType="Test.ActiveFoo">
+        </EntitySet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
