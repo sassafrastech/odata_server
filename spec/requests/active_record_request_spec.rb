@@ -114,6 +114,23 @@ describe OData::ActiveRecordSchema::Base do
           expect_output(file_fixture("metadata_after_hook.xml").read)
         end
       end
+
+      context "with extra tags" do
+        let(:options) do
+          {
+            transformers: {
+              metadata: lambda do |schema|
+                schema.entity_types["ActiveFoo"].extra_tags = {BaseType: "Test"}
+                schema
+              end
+            }
+          }
+        end
+
+        it "renders as expected" do
+          expect_output(file_fixture("metadata_with_extra_tags.xml").read)
+        end
+      end
     end
 
     context "resource" do

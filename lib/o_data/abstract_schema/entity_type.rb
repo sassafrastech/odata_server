@@ -8,7 +8,7 @@ module OData
       include Mixins::Schematize
 
       attr_reader :key_property, :schema
-      attr_accessor :properties, :navigation_properties
+      attr_accessor :properties, :navigation_properties, :extra_tags
 
       def self.name_for(object)
         object.class.to_s.gsub('::', '')
@@ -20,6 +20,7 @@ module OData
         @properties = {}
         @key_property = nil
         @navigation_properties = {}
+        @extra_tags = {}
       end
 
       def key_property=(property)
