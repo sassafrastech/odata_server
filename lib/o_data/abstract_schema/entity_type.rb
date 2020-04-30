@@ -7,7 +7,7 @@ module OData
       include Mixins::Serializable::EntityTypeInstanceMethods
       include Mixins::Schematize
 
-      attr_reader :key_property, :schema
+      attr_reader :key_property, :extra_tags, :schema
       attr_accessor :properties, :navigation_properties
 
       def self.name_for(object)
@@ -20,6 +20,7 @@ module OData
         @properties = {}
         @key_property = nil
         @navigation_properties = {}
+        @extra_tags = {}
       end
 
       def key_property=(property)

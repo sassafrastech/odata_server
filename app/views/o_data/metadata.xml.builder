@@ -9,7 +9,7 @@ xml.edmx(:Edmx, Version: "4.0", "xmlns:edmx" => "http://docs.oasis-open.org/odat
 
         schema.entity_types.values.sort_by(&:qualified_name).each do |entity_type|
           next if entity_type.name.include?('HABTM')
-          xml.tag!(:EntityType, Name: entity_type.name) do
+          xml.tag!(:EntityType, Name: entity_type.name, **entity_type.extra_tags) do
             unless entity_type.key_property.blank?
               xml.tag!(:Key) do
                 xml.tag!(:PropertyRef, Name: entity_type.key_property.name)
