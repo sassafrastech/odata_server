@@ -6,7 +6,7 @@
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
-        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false"/>
         <Property Name="Name" Type="Edm.String" Nullable="true"/>
         <Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
         <Property Name="UpdatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
@@ -15,7 +15,7 @@
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
-        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false"/>
         <Property Name="Name" Type="Edm.String" Nullable="true"/>
         <Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
         <Property Name="UpdatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
