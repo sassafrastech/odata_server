@@ -23,7 +23,11 @@ module OData
         end
 
         def valid?(results)
-          results.present?
+          if countable?
+            results.is_a?(Array) || results.is_a?(ActiveRecord::Relation)
+          else
+            !results.nil?
+          end
         end
       end # EntityTypeSegment
     end # Segments
