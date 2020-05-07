@@ -28,6 +28,9 @@ module OData
           name.pluralize
         end
 
+        def url_name
+          @url_name || plural_name
+        end
       end
     end
   end

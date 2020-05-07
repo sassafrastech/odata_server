@@ -21,10 +21,12 @@ module OData
       def initialize(schema, active_record, options = {})
         options.reverse_merge!(reflect_on_associations: true,
                                name: self.class.name_for(active_record),
+                               url_name: nil,
                                where: {})
 
         super(schema, options[:name])
 
+        @url_name = options[:url_name]
         @active_record = active_record.where(options[:where])
 
         key_property_name = self.class.primary_key_for(@active_record).to_s
