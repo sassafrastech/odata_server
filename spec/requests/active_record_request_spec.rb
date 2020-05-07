@@ -74,6 +74,7 @@ describe OData::ActiveRecordSchema::Base do
 
         it "renders with custom EntityTypes" do
           schema.add_entity_type(ActiveFoo, name: "CustomFoo",
+                                            url_name: "CustomFooUrl",
                                             reflect_on_associations: false)
           schema.add_entity_type(ActiveBar, name: "CustomBar",
                                             reflect_on_associations: false)
@@ -82,7 +83,7 @@ describe OData::ActiveRecordSchema::Base do
           expect_output({
             "@odata.context" => "http://www.example.com/odata/$metadata",
             value: [
-              { name: "CustomFoos", kind: "EntitySet", url: "CustomFoos" },
+              { name: "CustomFoos", kind: "EntitySet", url: "CustomFooUrl" },
               { name: "CustomBars", kind: "EntitySet", url: "CustomBars" }
             ]
           }.to_json)
@@ -215,6 +216,24 @@ describe OData::ActiveRecordSchema::Base do
               { Id: 1, Name: "test 1", CreatedAt: "2020-01-01T12:00:00Z", UpdatedAt: "2020-01-01T12:00:00Z" }
             ]
           }.to_json)
+        end
+
+        context "with aliased URLs" do
+          let(:path) { "#{root}/CustomFooUrl" }
+
+          it "renders as expected" do
+            schema.add_entity_type(ActiveFoo, url_name: "CustomFooUrl",
+                                              reflect_on_associations: false)
+            refresh_schema(schema)
+
+            expect_output({
+              "@odata.context" => "http://www.example.com/odata/$metadata#ActiveFoos",
+              value: [
+                { Id: 1, Name: "test 1", CreatedAt: "2020-01-01T12:00:00Z", UpdatedAt: "2020-01-01T12:00:00Z" },
+                { Id: 2, Name: "test 2", CreatedAt: "2020-01-01T12:00:00Z", UpdatedAt: "2020-01-01T12:00:00Z" },
+              ]
+            }.to_json)
+          end
         end
       end
     end
