@@ -7,10 +7,12 @@ module OData
 
       attr_accessor :namespace
       attr_accessor :entity_types
+      attr_accessor :entity_type_aliases
 
       def initialize(namespace = "OData")
         @namespace = namespace
         @entity_types = {}
+        @entity_type_aliases = {}
       end
 
       def EntityType(*args)
