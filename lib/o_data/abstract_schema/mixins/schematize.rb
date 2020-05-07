@@ -28,6 +28,10 @@ module OData
           name.pluralize
         end
 
+        def url_name
+          # Some software, such as Power BI, fails if the URL contains certain symbols.
+          @url_name || CGI.escape(plural_name.gsub(/[^a-zA-Z\-_0-9. ]/, ''))
+        end
       end
     end
   end

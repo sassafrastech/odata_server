@@ -41,9 +41,11 @@ module OData
         entity_types[EntityType.name_for(klass)]
       end
 
-      def add_entity_type(*args)
-        entity_type = EntityType.new(self, *args)
+      def add_entity_type(active_record, url_name: nil, **options)
+        entity_type = EntityType.new(self, active_record, url_name: url_name, **options)
         @entity_types[entity_type.name] = entity_type
+        # Alias the entity for fast lookup via URL path.
+        @entity_types[url_name.singularize] = entity_type if url_name
       end
     end
   end
