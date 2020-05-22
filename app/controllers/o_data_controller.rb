@@ -13,10 +13,10 @@ class ODataController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: :options
 
-  # This action needs to register first.
-  # Clients may override the method if they want to do something.
-  before_action :before_action
-  def before_action; end
+  # This action needs to register before the others.
+  # Clients may override the method if they want to do something with it.
+  before_action :refresh_schema
+  def refresh_schema; end
 
   before_action :parse_url, only: :resource
   before_action :set_request_format!, only: :resource
