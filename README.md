@@ -23,7 +23,15 @@ This code is not heavily tested.  It is alpha quality at best. Expect the API to
 
 ## Resources
 
-**OData V4**:
+### Other repos
+
+In case new commits can be pulled in, these are the repos this fork is primarily based on:
+- [Live network graph](https://github.com/synbioz/odata_server/network)
+- https://github.com/synbioz/odata_server/commits/master
+- https://github.com/timbogit/odata_server/commits/rails_5_2
+- https://github.com/owenscorning/odata_server/commits/master
+
+### OData V4
 
 * http://www.odata.org
 * http://www.odata.org/documentation
@@ -99,3 +107,15 @@ uses this gem.
 * Update the core for OData v4
 * Add support for `$search` option
 * Update and add more tests
+
+## Development
+
+To develop odata_server itself:
+
+### Setup
+
+1. Install dependencies: `bundle`
+
+### Testing
+
+1. `rspec`

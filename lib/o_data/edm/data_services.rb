@@ -5,7 +5,7 @@ module OData
       @@schemas = []
 
       attr_accessor :entity_types, :schemas
-      
+
       def initialize(schemas = @@schemas)
         @entity_types = []
         @schemas = schemas.dup || []

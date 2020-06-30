@@ -38,16 +38,16 @@ module OData
 
             property = entity_type.find_property(key)
             raise OData::Core::Errors::PropertyNotFound.new(query, key) if property.blank?
-            
+
             raise OData::Core::Errors::CoreKeyValueException.new(query, key, value) unless acc[key.to_sym].blank?
 
             acc[property.name.to_sym] = value
             acc
           }
 
-          keys.inject(sanitized_key_values) { |acc, key_value| 
+          keys.inject(sanitized_key_values) { |acc, key_value|
             raise OData::Core::Errors::CoreKeyValueException.new(query, key_property_name, key_value) unless acc[key_property_name.to_sym].blank?
-            
+
             acc[key_property_name.to_sym] = key_value
             acc
           }

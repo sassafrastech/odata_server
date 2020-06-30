@@ -39,7 +39,7 @@ module OData
 
       def value_for(one)
         v = one.send(@column_adapter.name.to_sym)
-        return v.to_f if return_type == 'Edm.Decimal'
+        return v.to_f if return_type == 'Edm.Decimal' && !v.nil?
         return v.iso8601 if v.respond_to?(:iso8601)
         v
       end

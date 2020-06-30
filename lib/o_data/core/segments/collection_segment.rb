@@ -14,7 +14,7 @@ module OData
 
           query.Segment(self, entity_type, sanitized_key_values)
         end
-        
+
         def self.can_follow?(anOtherSegment)
           anOtherSegment.blank?
         end
