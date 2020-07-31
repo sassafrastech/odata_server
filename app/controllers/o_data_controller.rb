@@ -44,7 +44,7 @@ class ODataController < ApplicationController
   end
 
   def options
-    render text: 'Allow: GET', status: :ok
+    render plain: 'Allow: GET', status: :ok
   end
 
   def resource
@@ -53,9 +53,9 @@ class ODataController < ApplicationController
 
     case @last_segment.class.segment_name
     when OData::Core::Segments::CountSegment.segment_name
-      render text: @results.to_i
+      render plain: @results.to_i
     when OData::Core::Segments::ValueSegment.segment_name
-      render text: @results.to_s
+      render plain: @results.to_s
     when OData::Core::Segments::PropertySegment.segment_name
       path = @query.segments.map(&:value).join('/')
 
