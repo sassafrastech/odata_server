@@ -236,6 +236,18 @@ describe OData::ActiveRecordSchema::Base do
           end
         end
       end
+
+      context "navigation" do
+        context "$count" do
+          let(:path) { "#{root}/ActiveFoos/$count" }
+          it { expect_output("2") }
+        end
+
+        context "$value" do
+          let(:path) { "#{root}/ActiveFoos(1)/Name/$value" }
+          it { expect_output("test 1") }
+        end
+      end
     end
   end
 end
