@@ -31,7 +31,7 @@ class ODataController < ApplicationController
 
   def service
     respond_to do |format|
-      format.xml  # service.xml.builder
+      # format.xml  # service.xml.builder
       format.json do
         schema = @@data_services.schemas.first
         json = {
@@ -66,13 +66,13 @@ class ODataController < ApplicationController
       path = @query.segments.map(&:value).join('/')
 
       respond_to do |format|
-        format.atom do
-          render 'property_segment', locals: {
-            key: @results.keys.first.name,
-            type: @results.keys.first.return_type,
-            value: @results.values.first
-          }
-        end
+        # format.atom do
+        #   render 'property_segment', locals: {
+        #     key: @results.keys.first.name,
+        #     type: @results.keys.first.return_type,
+        #     value: @results.values.first
+        #   }
+        # end
         format.json do
           render 'property_segment', locals: {
             path: path,
@@ -100,7 +100,7 @@ class ODataController < ApplicationController
       raise OData::Core::Errors::EntityTypeNotFound.new(query, @results.first.class.name) if @entity_type.blank?
 
       respond_to do |format|
-        format.atom # resource.atom.builder
+        # format.atom # resource.atom.builder
         format.json # resource.json.erb
       end
     when OData::Core::Segments::CollectionSegment.segment_name
@@ -110,7 +110,7 @@ class ODataController < ApplicationController
       @expand_navigation_property_paths = @query.options[:$expand].try(:navigation_property_paths)
 
       respond_to do |format|
-        format.atom # resource.atom.builder
+        # format.atom # resource.atom.builder
         format.json # resource.json.erb
       end
     else
