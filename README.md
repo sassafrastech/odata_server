@@ -114,9 +114,10 @@ In addition to `:classes` and `:reflection`, you can use:
 
 ## TODOS
 
+* Update and add more tests
+* Review XML rendering
 * Update the core for OData v4
 * Add support for `$search` option
-* Update and add more tests
 
 ## Development
 
