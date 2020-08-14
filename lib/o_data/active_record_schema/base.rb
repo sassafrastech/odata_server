@@ -1,12 +1,20 @@
 module OData
   module ActiveRecordSchema
     class Base < OData::AbstractSchema::Base
-      attr_reader :classes, :reflection
+      attr_reader :classes, :reflection, :transformers
 
       def initialize(namespace = 'OData', options = {})
         super(namespace)
         @classes = Array(options[:classes])
         @reflection = options[:reflection] || false
+        # Data transformer hooks.
+        # See spec/requests/ for examples of how these can be used.
+        @transformers = options[:transformers] || {}
+        noop = ->(x) { x }
+        @transformers[:metadata] ||= noop
+        @transformers[:root] ||= noop
+        @transformers[:feed] ||= noop
+        @transformers[:entry] ||= noop
 
         if classes.any?
           path = classes.map { |klass| Rails.root.to_s + "/app/models/#{klass}.rb" }

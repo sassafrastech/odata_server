@@ -1,0 +1,2 @@
+class ActiveBar < ApplicationRecord
+end

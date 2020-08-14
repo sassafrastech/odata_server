@@ -1,0 +1,2 @@
+class ActiveFoo < ApplicationRecord
+end

@@ -1,6 +1,7 @@
 module OData
   module Edm
     class DataServices
+      # Initial schemas that can be added statically.
       cattr_accessor :schemas
       @@schemas = []
 
@@ -8,7 +9,17 @@ module OData
 
       def initialize(schemas = @@schemas)
         @entity_types = []
-        @schemas = schemas.dup || []
+        @schemas = []
+        append_schemas(schemas.dup || [])
+      end
+
+      def clear_schemas
+        @entity_types.clear
+        @schemas.clear
+      end
+
+      def append_schemas(schemas)
+        @schemas.concat(schemas)
         schemas.each do |schema|
           @entity_types.concat(schema.entity_types.values)
         end
