@@ -11,7 +11,8 @@ module OData
         :timestamp => 'Edm.DateTimeOffset',
         :float     => 'Edm.Decimal',
         :decimal   => 'Edm.Decimal',
-        :integer   => 'Edm.Int32',
+        :id        => 'Edm.Guid',
+        :integer   => 'Edm.Int64',
         :string    => 'Edm.String',
         :text      => 'Edm.String',
         :time      => 'Edm.TimeOfDay'

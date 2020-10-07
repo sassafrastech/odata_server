@@ -11,7 +11,7 @@
         <Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
         <Property Name="UpdatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
       </EntityType>
-      <EntityType Name="ActiveFoo">
+      <EntityType Name="ActiveFoo" BaseType="Test">
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
